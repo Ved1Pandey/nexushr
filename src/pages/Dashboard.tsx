@@ -17,13 +17,18 @@ const Dashboard = () => {
   // ==============================
   const fetchLeaves = async (token: string) => {
     try {
-      console.log("TOKEN SENT:", token);
-
       const res = await fetch("http://localhost:3001/api/leaves", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      // 🔥 AUTO LOGOUT ON TOKEN FAIL
+      if (res.status === 401 || res.status === 403) {
+        localStorage.clear();
+        navigate("/");
+        return;
+      }
 
       if (!res.ok) {
         console.error("FETCH FAILED:", res.status);
@@ -31,12 +36,42 @@ const Dashboard = () => {
       }
 
       const data = await res.json();
-      console.log("LEAVES:", data);
-
       setLeaves(data);
 
     } catch (err) {
       console.error("FETCH ERROR:", err);
+    }
+  };
+
+  // ==============================
+  // UPDATE STATUS
+  // ==============================
+  const updateStatus = async (id: number, status: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:3001/api/leaves/${id}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status }),
+        }
+      );
+
+      if (!res.ok) {
+        alert("Update failed ❌");
+        return;
+      }
+
+      fetchLeaves(token);
+
+    } catch (err) {
+      console.error("UPDATE ERROR:", err);
     }
   };
 
@@ -48,7 +83,6 @@ const Dashboard = () => {
     const token = localStorage.getItem("token");
 
     if (!storedUser || !token) {
-      console.log("NO AUTH ❌");
       navigate("/");
       return;
     }
@@ -56,11 +90,8 @@ const Dashboard = () => {
     try {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
-
-      fetchLeaves(token); // 🔥 correct call
-
+      fetchLeaves(token);
     } catch (err) {
-      console.log("USER PARSE ERROR");
       navigate("/");
     }
 
@@ -98,17 +129,14 @@ const Dashboard = () => {
       });
 
       if (!res.ok) {
-        console.error("APPLY FAILED:", res.status);
         alert("Apply failed ❌");
         return;
       }
 
       alert("Leave Applied ✅");
 
-      // 🔥 refresh data
       fetchLeaves(token);
 
-      // reset form
       setFromDate("");
       setToDate("");
       setReason("");
@@ -119,26 +147,16 @@ const Dashboard = () => {
   };
 
   // ==============================
-  // LOADING
-  // ==============================
   if (loading) return <h2>Loading...</h2>;
 
-  // ==============================
-  // UI
   // ==============================
   return (
     <div style={{ padding: 20 }}>
       <h2>Welcome {user?.name}</h2>
       <p>Role: {user?.role}</p>
 
+      {/* APPLY LEAVE */}
       <h3>Apply Leave</h3>
-
-      <input
-        type="date"
-        value={fromDate}
-        onChange={(e) => setFromDate(e.target.value)}
-      />
-      <br /><br />
 
       <input
         type="date"
@@ -158,18 +176,48 @@ const Dashboard = () => {
         Apply Leave
       </button>
 
+      {/* LEAVES LIST */}
       <h3>Leaves Data:</h3>
 
       {leaves.length === 0 ? (
         <p>No leaves found</p>
       ) : (
-        <pre>{JSON.stringify(leaves, null, 2)}</pre>
-      )}
+        leaves.map((leave) => (
+          <div
+            key={leave.id}
+            style={{
+              border: "1px solid gray",
+              margin: 10,
+              padding: 10,
+            }}
+          >
+            <p><b>From:</b> {leave.from_date}</p>
+            <p><b>To:</b> {leave.to_date}</p>
+            <p><b>Reason:</b> {leave.reason}</p>
+            <p><b>Status:</b> {leave.status}</p>
+{/* IMPORTANT FIX (ROLE SAFE CHECK) */}
+            {user?.role?.toLowerCase() === "team lead" && (
+              <>
+                <button
+                  onClick={() => updateStatus(leave.id, "APPROVED")}
+                >
+                  Approve
+                </button>
 
+                <button
+                  onClick={() => updateStatus(leave.id, "REJECTED")}
+                >
+                  Reject
+                </button>
+              </>
+            )}
+          </div>
+        ))
+      )}
+{/* LOGOUT */}
       <button
         onClick={() => {
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
+          localStorage.clear();
           navigate("/");
         }}
       >
