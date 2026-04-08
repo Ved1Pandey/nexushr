@@ -9,9 +9,9 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  // ✅ already logged in → go dashboard
+  // ✅ already logged in → go dashboard (FIXED)
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token"); // 🔥 CHANGE
     if (token && token !== "undefined") {
       navigate("/dashboard");
     }
@@ -40,21 +40,14 @@ const Login = () => {
         return;
       }
 
-      // ❗ DEBUG (important)
-      console.log("LOGIN RESPONSE:", data);
-
-      // ❗ SAFETY CHECK
       if (!data.token) {
-        setError("Token missing from backend ❌");
+        setError("Token missing ❌");
         return;
       }
 
-      // ✅ SAVE TOKEN PROPERLY
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      // ✅ VERIFY SAVE
-      console.log("SAVED TOKEN:", localStorage.getItem("token"));
+      // 🔥 CRITICAL FIX (TAB ISOLATION)
+      sessionStorage.setItem("token", data.token);
+      sessionStorage.setItem("user", JSON.stringify(data.user));
 
       alert("Login Success ✅");
 
