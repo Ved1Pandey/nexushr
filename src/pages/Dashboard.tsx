@@ -5,6 +5,7 @@ const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [leaves, setLeaves] = useState<any[]>([]);
+  const [balance, setBalance] = useState<any>(null); // ✅ NEW
 
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -31,12 +32,30 @@ const Dashboard = () => {
 
       const data = await res.json();
 
-      // ✅ REMOVE DUPLICATES
       const unique = Array.from(
         new Map(data.map((i: any) => [i.id, i])).values()
       );
 
       setLeaves(unique);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ==============================
+  // FETCH BALANCE ✅ NEW
+  // ==============================
+  const fetchBalance = async (token: string) => {
+    try {
+      const res = await fetch("http://localhost:3001/api/leave-balance", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      setBalance(data);
 
     } catch (err) {
       console.error(err);
@@ -68,6 +87,7 @@ const Dashboard = () => {
     }
 
     fetchLeaves(token);
+    fetchBalance(token); // ✅ refresh balance
   };
 
   // ==============================
@@ -84,6 +104,7 @@ const Dashboard = () => {
 
     setUser(JSON.parse(user));
     fetchLeaves(token);
+    fetchBalance(token); // ✅ ADD
     setLoading(false);
   }, []);
 
@@ -126,14 +147,14 @@ const Dashboard = () => {
   if (loading) return <h2>Loading...</h2>;
 
   // ==============================
-  // 🔥 ROLE CHECK
+  // ROLE CHECK
   // ==============================
   const isApprover = ["team lead", "manager"].includes(
     user?.role?.toLowerCase()
   );
 
   // ==============================
-  // 🔥 SPLIT LEAVES
+  // SPLIT LEAVES
   // ==============================
   const myLeaves = leaves.filter(l => l.employee_id === user?.id);
   const teamLeaves = leaves.filter(l => l.employee_id !== user?.id);
@@ -142,6 +163,18 @@ const Dashboard = () => {
     <div style={{ padding: 20 }}>
       <h2>Welcome {user?.name}</h2>
       <p>Role: {user?.role}</p>
+
+      {/* ✅ LEAVE BALANCE */}
+      <h3>Leave Balance</h3>
+      {balance ? (
+        <div style={{ marginBottom: 20 }}>
+          <p>CL: {balance.CL}</p>
+          <p>SL: {balance.SL}</p>
+          <p>PL: {balance.PL}</p>
+        </div>
+      ) : (
+        <p>Loading balance...</p>
+      )}
 
       {/* APPLY LEAVE */}
       <h3>Apply Leave</h3>
@@ -169,9 +202,7 @@ const Dashboard = () => {
 
       <button onClick={handleApplyLeave}>Apply</button>
 
-      {/* ============================== */}
       {/* MY LEAVES */}
-      {/* ============================== */}
       <h3>My Leaves</h3>
 
       {myLeaves.length === 0 ? (
@@ -187,9 +218,7 @@ const Dashboard = () => {
         ))
       )}
 
-      {/* ============================== */}
-      {/* TEAM LEAVES (ONLY TL / MANAGER) */}
-      {/* ============================== */}
+      {/* TEAM LEAVES */}
       {isApprover && (
         <>
           <h3>Team Leaves (For Approval)</h3>
@@ -230,7 +259,6 @@ const Dashboard = () => {
                   </span>
                 </p>
 
-                {/* 🔥 BLOCK SELF APPROVAL */}
                 {l.status === "PENDING" &&
                   l.employee_id !== user?.id && (
                     <>
@@ -253,6 +281,7 @@ const Dashboard = () => {
           )}
         </>
       )}
+
 {/* LOGOUT */}
       <button
         onClick={() => {
