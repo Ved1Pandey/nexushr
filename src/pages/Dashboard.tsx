@@ -13,7 +13,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   // ==============================
-    // FETCH LEAVES ✅ FIXED
+  // FETCH LEAVES
   // ==============================
   const fetchLeaves = async (token: string) => {
     try {
@@ -22,14 +22,16 @@ const Dashboard = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-if (res.status === 401 || res.status === 403) {
+
+      if (res.status === 401 || res.status === 403) {
         sessionStorage.clear();
         navigate("/");
         return;
       }
+
       const data = await res.json();
 
-      // ✅ DEDUPE ONLY (NO MUTATION)
+      // ✅ REMOVE DUPLICATES
       const unique = Array.from(
         new Map(data.map((i: any) => [i.id, i])).values()
       );
@@ -39,8 +41,10 @@ if (res.status === 401 || res.status === 403) {
     } catch (err) {
       console.error(err);
     }
-  };// ==============================
-  // UPDATE STATUS ✅ FIXED
+  };
+
+  // ==============================
+  // UPDATE STATUS
   // ==============================
   const updateStatus = async (id: number, status: string) => {
     const token = sessionStorage.getItem("token");
@@ -67,7 +71,7 @@ if (res.status === 401 || res.status === 403) {
   };
 
   // ==============================
-  // INIT ✅ FIXED (sessionStorage)
+  // INIT
   // ==============================
   useEffect(() => {
     const user = sessionStorage.getItem("user");
@@ -113,6 +117,7 @@ if (res.status === 401 || res.status === 403) {
     }
 
     fetchLeaves(token!);
+
     setFromDate("");
     setToDate("");
     setReason("");
@@ -120,47 +125,141 @@ if (res.status === 401 || res.status === 403) {
 
   if (loading) return <h2>Loading...</h2>;
 
+  // ==============================
+  // 🔥 ROLE CHECK
+  // ==============================
+  const isApprover = ["team lead", "manager"].includes(
+    user?.role?.toLowerCase()
+  );
+
+  // ==============================
+  // 🔥 SPLIT LEAVES
+  // ==============================
+  const myLeaves = leaves.filter(l => l.employee_id === user?.id);
+  const teamLeaves = leaves.filter(l => l.employee_id !== user?.id);
+
   return (
     <div style={{ padding: 20 }}>
       <h2>Welcome {user?.name}</h2>
       <p>Role: {user?.role}</p>
 
+      {/* APPLY LEAVE */}
       <h3>Apply Leave</h3>
 
-      <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+      <input
+        type="date"
+        value={fromDate}
+        onChange={(e) => setFromDate(e.target.value)}
+      />
       <br /><br />
 
-      <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+      <input
+        type="date"
+        value={toDate}
+        onChange={(e) => setToDate(e.target.value)}
+      />
       <br /><br />
 
-      <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason" />
+      <input
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+        placeholder="Reason"
+      />
       <br /><br />
 
       <button onClick={handleApplyLeave}>Apply</button>
 
-      <h3>Leaves</h3>
+      {/* ============================== */}
+      {/* MY LEAVES */}
+      {/* ============================== */}
+      <h3>My Leaves</h3>
 
-      {leaves.map((l) => (
-        <div key={l.id} style={{ border: "1px solid", margin: 10, padding: 10 }}>
-          <p>{l.from_date} → {l.to_date}</p>
-          <p>{l.reason}</p>
-          <p>{l.status}</p>
+      {myLeaves.length === 0 ? (
+        <p>No leaves</p>
+      ) : (
+        myLeaves.map((l) => (
+          <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 12 }}>
+            <p><b>From:</b> {l.from_date}</p>
+            <p><b>To:</b> {l.to_date}</p>
+            <p><b>Reason:</b> {l.reason}</p>
+            <p><b>Status:</b> {l.status}</p>
+          </div>
+        ))
+      )}
 
-          {/* ✅ FIX ROLE CHECK */}
-          {l.status === "PENDING" &&
-            ["team lead", "manager"].includes(user?.role?.toLowerCase()) && (
-              <>
-                <button onClick={() => updateStatus(l.id, "APPROVED")}>Approve</button>
-                <button onClick={() => updateStatus(l.id, "REJECTED")}>Reject</button>
-              </>
-            )}
-        </div>
-      ))}
+      {/* ============================== */}
+      {/* TEAM LEAVES (ONLY TL / MANAGER) */}
+      {/* ============================== */}
+      {isApprover && (
+        <>
+          <h3>Team Leaves (For Approval)</h3>
 
-      <button onClick={() => {
-        sessionStorage.clear();
-        navigate("/");
-      }}>
+          {teamLeaves.length === 0 ? (
+            <p>No team leaves</p>
+          ) : (
+            teamLeaves.map((l) => (
+              <div
+                key={l.id}
+                style={{
+                  border: "1px solid #ccc",
+                  margin: 10,
+                  padding: 12,
+                  borderRadius: 8,
+                  background: "#f9f9f9"
+                }}
+              >
+                <p><b>Employee:</b> {l.employees?.name || "-"}</p>
+
+                <p><b>From:</b> {l.from_date}</p>
+                <p><b>To:</b> {l.to_date}</p>
+                <p><b>Reason:</b> {l.reason}</p>
+
+                <p>
+                  <b>Status:</b>{" "}
+                  <span
+                    style={{
+                      color:
+                        l.status === "APPROVED"
+                          ? "green"
+                          : l.status === "REJECTED"
+                          ? "red"
+                          : "orange",
+                    }}
+                  >
+                    {l.status}
+                  </span>
+                </p>
+
+                {/* 🔥 BLOCK SELF APPROVAL */}
+                {l.status === "PENDING" &&
+                  l.employee_id !== user?.id && (
+                    <>
+                      <button
+                        onClick={() => updateStatus(l.id, "APPROVED")}
+                        style={{ marginRight: 10 }}
+                      >
+                        Approve
+                      </button>
+
+                      <button
+                        onClick={() => updateStatus(l.id, "REJECTED")}
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+              </div>
+            ))
+          )}
+        </>
+      )}
+{/* LOGOUT */}
+      <button
+        onClick={() => {
+          sessionStorage.clear();
+          navigate("/");
+        }}
+      >
         Logout
       </button>
     </div>
