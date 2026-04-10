@@ -10,7 +10,9 @@ const Dashboard = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [reason, setReason] = useState("");
-  const [type, setType] = useState("CL"); // ✅ NEW
+  const [type, setType] = useState("CL");
+
+  const [submitting, setSubmitting] = useState(false); // ✅ prevent spam
 
   const navigate = useNavigate();
 
@@ -31,14 +33,16 @@ const Dashboard = () => {
 
       const data = await res.json();
 
-      const unique = Array.from(
-        new Map(data.map((i: any) => [i.id, i])).values()
-      );
+      if (!Array.isArray(data)) {
+        console.error("Leaves API error:", data);
+        setLeaves([]);
+        return;
+      }
 
-      setLeaves(unique);
+      setLeaves(data);
 
     } catch (err) {
-      console.error(err);
+      console.error("Fetch leaves error:", err);
     }
   };
 
@@ -78,13 +82,15 @@ const Dashboard = () => {
       }
     );
 
+    const data = await res.json();
+
     if (!res.ok) {
-      alert("Update failed ❌");
+      alert(data.error || "Update failed ❌");
       return;
     }
 
     fetchLeaves(token);
-    fetchBalance(token); // ✅ refresh balance
+    fetchBalance(token);
   };
 
   // ==============================
@@ -110,6 +116,7 @@ const Dashboard = () => {
   // ==============================
   const handleApplyLeave = async () => {
     const token = sessionStorage.getItem("token");
+    if (!token) return;
 
     if (!fromDate || !toDate || !reason) {
       alert("Fill all fields ❌");
@@ -121,31 +128,47 @@ const Dashboard = () => {
       return;
     }
 
-    const res = await fetch("http://localhost:3001/api/leaves", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        from_date: fromDate,
-        to_date: toDate,
-        reason,
-        type, // ✅ IMPORTANT
-      }),
-    });
+    try {
+      setSubmitting(true); // ✅ disable button
 
-    if (!res.ok) {
-      alert("Apply failed ❌");
-      return;
+      const res = await fetch("http://localhost:3001/api/leaves", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          from_date: fromDate,
+          to_date: toDate,
+          reason,
+          type,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Apply failed ❌");
+        setSubmitting(false);
+        return;
+      }
+
+      // ✅ refresh
+      await fetchLeaves(token);
+      await fetchBalance(token);
+
+      // reset
+      setFromDate("");
+      setToDate("");
+      setReason("");
+      setType("CL");
+
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong ❌");
+    } finally {
+      setSubmitting(false);
     }
-
-    fetchLeaves(token!);
-
-    setFromDate("");
-    setToDate("");
-    setReason("");
-    setType("CL");
   };
 
   if (loading) return <h2>Loading...</h2>;
@@ -163,17 +186,17 @@ const Dashboard = () => {
       <h2>Welcome {user?.name}</h2>
       <p>Role: {user?.role}</p>
 
-      {/* ================== BALANCE ================== */}
+      {/* BALANCE */}
       <h3>Leave Balance</h3>
       {balance ? (
-        <div>
+        <>
           <p>CL: {balance.CL}</p>
           <p>SL: {balance.SL}</p>
           <p>PL: {balance.PL}</p>
-        </div>
+        </>
       ) : <p>Loading...</p>}
 
-      {/* ================== APPLY ================== */}
+      {/* APPLY */}
       <h3>Apply Leave</h3>
 
       <select value={type} onChange={(e) => setType(e.target.value)}>
@@ -197,21 +220,39 @@ const Dashboard = () => {
       />
 
       <br /><br />
-      <button onClick={handleApplyLeave}>Apply</button>
 
-      {/* ================== MY LEAVES ================== */}
+      <button onClick={handleApplyLeave} disabled={submitting}>
+        {submitting ? "Applying..." : "Apply"}
+      </button>
+
+      {/* MY LEAVES */}
       <h3>My Leaves</h3>
 
-      {myLeaves.map((l) => (
-        <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
-          <p><b>Type:</b> {l.type}</p>
-          <p><b>From:</b> {l.from_date}</p>
-          <p><b>To:</b> {l.to_date}</p>
-          <p><b>Status:</b> {l.status}</p>
-        </div>
-      ))}
+      {myLeaves.length === 0 ? (
+        <p>No leaves</p>
+      ) : (
+        myLeaves.map((l) => (
+          <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
+            <p><b>Type:</b> {l.type}</p>
+            <p>{l.from_date} → {l.to_date}</p>
+            <p>
+              Status:{" "}
+              <span style={{
+                color:
+                  l.status === "APPROVED"
+                    ? "green"
+                    : l.status === "REJECTED"
+                    ? "red"
+                    : "orange"
+              }}>
+                {l.status}
+              </span>
+            </p>
+          </div>
+        ))
+      )}
 
-      {/* ================== TEAM ================== */}
+      {/* TEAM */}
       {isApprover && (
         <>
           <h3>Team Leaves</h3>
@@ -236,14 +277,12 @@ const Dashboard = () => {
           ))}
         </>
       )}
-{/* ================== LOGOUT ================== */}
+
       <br />
-      <button
-        onClick={() => {
-          sessionStorage.clear();
-          navigate("/");
-        }}
-      >
+      <button onClick={() => {
+        sessionStorage.clear();
+        navigate("/");
+      }}>
         Logout
       </button>
     </div>
