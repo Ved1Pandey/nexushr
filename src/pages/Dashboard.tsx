@@ -5,11 +5,12 @@ const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [leaves, setLeaves] = useState<any[]>([]);
-  const [balance, setBalance] = useState<any>(null); // ✅ NEW
+  const [balance, setBalance] = useState<any>(null);
 
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [reason, setReason] = useState("");
+  const [type, setType] = useState("CL"); // ✅ NEW
 
   const navigate = useNavigate();
 
@@ -19,9 +20,7 @@ const Dashboard = () => {
   const fetchLeaves = async (token: string) => {
     try {
       const res = await fetch("http://localhost:3001/api/leaves", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res.status === 401 || res.status === 403) {
@@ -44,14 +43,12 @@ const Dashboard = () => {
   };
 
   // ==============================
-  // FETCH BALANCE ✅ NEW
+  // FETCH BALANCE
   // ==============================
   const fetchBalance = async (token: string) => {
     try {
       const res = await fetch("http://localhost:3001/api/leave-balance", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await res.json();
@@ -104,7 +101,7 @@ const Dashboard = () => {
 
     setUser(JSON.parse(user));
     fetchLeaves(token);
-    fetchBalance(token); // ✅ ADD
+    fetchBalance(token);
     setLoading(false);
   }, []);
 
@@ -119,6 +116,11 @@ const Dashboard = () => {
       return;
     }
 
+    if (new Date(fromDate) > new Date(toDate)) {
+      alert("Invalid date range ❌");
+      return;
+    }
+
     const res = await fetch("http://localhost:3001/api/leaves", {
       method: "POST",
       headers: {
@@ -129,6 +131,7 @@ const Dashboard = () => {
         from_date: fromDate,
         to_date: toDate,
         reason,
+        type, // ✅ IMPORTANT
       }),
     });
 
@@ -142,55 +145,49 @@ const Dashboard = () => {
     setFromDate("");
     setToDate("");
     setReason("");
+    setType("CL");
   };
 
   if (loading) return <h2>Loading...</h2>;
 
-  // ==============================
-  // ROLE CHECK
-  // ==============================
   const isApprover = ["team lead", "manager"].includes(
     user?.role?.toLowerCase()
   );
 
-  // ==============================
-  // SPLIT LEAVES
-  // ==============================
   const myLeaves = leaves.filter(l => l.employee_id === user?.id);
   const teamLeaves = leaves.filter(l => l.employee_id !== user?.id);
 
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20, maxWidth: 600, margin: "auto" }}>
+      
       <h2>Welcome {user?.name}</h2>
       <p>Role: {user?.role}</p>
 
-      {/* ✅ LEAVE BALANCE */}
+      {/* ================== BALANCE ================== */}
       <h3>Leave Balance</h3>
       {balance ? (
-        <div style={{ marginBottom: 20 }}>
+        <div>
           <p>CL: {balance.CL}</p>
           <p>SL: {balance.SL}</p>
           <p>PL: {balance.PL}</p>
         </div>
-      ) : (
-        <p>Loading balance...</p>
-      )}
+      ) : <p>Loading...</p>}
 
-      {/* APPLY LEAVE */}
+      {/* ================== APPLY ================== */}
       <h3>Apply Leave</h3>
 
-      <input
-        type="date"
-        value={fromDate}
-        onChange={(e) => setFromDate(e.target.value)}
-      />
+      <select value={type} onChange={(e) => setType(e.target.value)}>
+        <option value="CL">CL</option>
+        <option value="SL">SL</option>
+        <option value="PL">PL</option>
+      </select>
+
       <br /><br />
 
-      <input
-        type="date"
-        value={toDate}
-        onChange={(e) => setToDate(e.target.value)}
-      />
+      <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+      <br /><br />
+
+      <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
       <br /><br />
 
       <input
@@ -198,91 +195,49 @@ const Dashboard = () => {
         onChange={(e) => setReason(e.target.value)}
         placeholder="Reason"
       />
-      <br /><br />
 
+      <br /><br />
       <button onClick={handleApplyLeave}>Apply</button>
 
-      {/* MY LEAVES */}
+      {/* ================== MY LEAVES ================== */}
       <h3>My Leaves</h3>
 
-      {myLeaves.length === 0 ? (
-        <p>No leaves</p>
-      ) : (
-        myLeaves.map((l) => (
-          <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 12 }}>
-            <p><b>From:</b> {l.from_date}</p>
-            <p><b>To:</b> {l.to_date}</p>
-            <p><b>Reason:</b> {l.reason}</p>
-            <p><b>Status:</b> {l.status}</p>
-          </div>
-        ))
-      )}
+      {myLeaves.map((l) => (
+        <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
+          <p><b>Type:</b> {l.type}</p>
+          <p><b>From:</b> {l.from_date}</p>
+          <p><b>To:</b> {l.to_date}</p>
+          <p><b>Status:</b> {l.status}</p>
+        </div>
+      ))}
 
-      {/* TEAM LEAVES */}
+      {/* ================== TEAM ================== */}
       {isApprover && (
         <>
-          <h3>Team Leaves (For Approval)</h3>
+          <h3>Team Leaves</h3>
 
-          {teamLeaves.length === 0 ? (
-            <p>No team leaves</p>
-          ) : (
-            teamLeaves.map((l) => (
-              <div
-                key={l.id}
-                style={{
-                  border: "1px solid #ccc",
-                  margin: 10,
-                  padding: 12,
-                  borderRadius: 8,
-                  background: "#f9f9f9"
-                }}
-              >
-                <p><b>Employee:</b> {l.employees?.name || "-"}</p>
+          {teamLeaves.map((l) => (
+            <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
+              <p><b>{l.employees?.name}</b></p>
+              <p>{l.from_date} → {l.to_date}</p>
+              <p>Status: {l.status}</p>
 
-                <p><b>From:</b> {l.from_date}</p>
-                <p><b>To:</b> {l.to_date}</p>
-                <p><b>Reason:</b> {l.reason}</p>
-
-                <p>
-                  <b>Status:</b>{" "}
-                  <span
-                    style={{
-                      color:
-                        l.status === "APPROVED"
-                          ? "green"
-                          : l.status === "REJECTED"
-                          ? "red"
-                          : "orange",
-                    }}
-                  >
-                    {l.status}
-                  </span>
-                </p>
-
-                {l.status === "PENDING" &&
-                  l.employee_id !== user?.id && (
-                    <>
-                      <button
-                        onClick={() => updateStatus(l.id, "APPROVED")}
-                        style={{ marginRight: 10 }}
-                      >
-                        Approve
-                      </button>
-
-                      <button
-                        onClick={() => updateStatus(l.id, "REJECTED")}
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-              </div>
-            ))
-          )}
+              {l.status === "PENDING" && (
+                <>
+                  <button onClick={() => updateStatus(l.id, "APPROVED")}>
+                    Approve
+                  </button>
+                  <button onClick={() => updateStatus(l.id, "REJECTED")}>
+                    Reject
+                  </button>
+                </>
+              )}
+            </div>
+          ))}
         </>
       )}
-
-{/* LOGOUT */}
+{/* ================== LOGOUT ================== */}
+      <br />
       <button
         onClick={() => {
           sessionStorage.clear();
