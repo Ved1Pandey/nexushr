@@ -1,121 +1,152 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+type LeaveType = "CL" | "SL" | "PL";
+
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [leaves, setLeaves] = useState<any[]>([]);
+  const [attendance, setAttendance] = useState<any[]>([]); // ✅ NEW
   const [balance, setBalance] = useState<any>(null);
-
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [reason, setReason] = useState("");
-  const [type, setType] = useState("CL");
+  const [type, setType] = useState<LeaveType>("CL");
 
-  const [submitting, setSubmitting] = useState(false); // ✅ prevent spam
+  const [submitting, setSubmitting] = useState(false);
+  const [punchLoading, setPunchLoading] = useState(false);
 
   const navigate = useNavigate();
 
   // ==============================
+  // SAFE FETCH
+  // ==============================
+const BASE_URL = "http://localhost:3001/api";
+
+const safeFetch = async (endpoint: string, options: any = {}) => {
+  const res = await fetch(`${BASE_URL}${endpoint}`, options);
+
+  let data = {};
+  try {
+    data = await res.json();
+  } catch {}
+
+  if (!res.ok) {
+    throw new Error((data as any).error || "Something failed");
+  }
+
+  return data;
+};
+  // ==============================
   // FETCH LEAVES
   // ==============================
-  const fetchLeaves = async (token: string) => {
-    try {
-      const res = await fetch("http://localhost:3001/api/leaves", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+const fetchLeaves = async (token: string, user: any) => {
+  const endpoint =
+    user?.role?.toLowerCase() === "team lead"
+      ? "/team-leaves"
+      : "/leaves";
 
-      if (res.status === 401 || res.status === 403) {
-        sessionStorage.clear();
-        navigate("/");
-        return;
-      }
+  const data: any = await safeFetch(endpoint, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-      const data = await res.json();
-
-      if (!Array.isArray(data)) {
-        console.error("Leaves API error:", data);
-        setLeaves([]);
-        return;
-      }
-
-      setLeaves(data);
-
-    } catch (err) {
-      console.error("Fetch leaves error:", err);
-    }
-  };
+  setLeaves(Array.isArray(data) ? data : []);
+};
 
   // ==============================
   // FETCH BALANCE
   // ==============================
   const fetchBalance = async (token: string) => {
-    try {
-      const res = await fetch("http://localhost:3001/api/leave-balance", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const data = await safeFetch("/leave-balance", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      const data = await res.json();
-      setBalance(data);
-
-    } catch (err) {
-      console.error(err);
-    }
+    setBalance(data);
   };
 
   // ==============================
-  // UPDATE STATUS
+  // FETCH ATTENDANCE ✅ NEW
   // ==============================
-  const updateStatus = async (id: number, status: string) => {
+  const fetchAttendance = async (token: string) => {
+      const data: any = await safeFetch("/attendance", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setAttendance(Array.isArray(data) ? data : []);
+  };
+
+  // ==============================
+  // PUNCH IN
+  // ==============================
+  
+  const handlePunchIn = async () => {
     const token = sessionStorage.getItem("token");
     if (!token) return;
 
-    const res = await fetch(
-      `http://localhost:3001/api/leaves/${id}/status`,
-      {
-        method: "PATCH",
+    try {
+      setPunchLoading(true);
+
+      const position = await new Promise<GeolocationPosition>((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject)
+      );
+
+      const { latitude, longitude } = position.coords;
+
+      await safeFetch("/punch-in", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status }),
-      }
-    );
+        body: JSON.stringify({ latitude, longitude }),
+      });
 
-    const data = await res.json();
+      alert("Punch In success ✅");
 
-    if (!res.ok) {
-      alert(data.error || "Update failed ❌");
-      return;
+      await fetchAttendance(token); // refresh
+
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setPunchLoading(false);
     }
-
-    fetchLeaves(token);
-    fetchBalance(token);
   };
 
   // ==============================
-  // INIT
+  // PUNCH OUT
   // ==============================
-  useEffect(() => {
-    const user = sessionStorage.getItem("user");
+  const handlePunchOut = async () => {
     const token = sessionStorage.getItem("token");
+    if (!token) return;
 
-    if (!user || !token) {
-      navigate("/");
-      return;
+    try {
+      setPunchLoading(true);
+
+      await safeFetch("/punch-out", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      alert("Punch Out success ✅");
+
+      await fetchAttendance(token);
+
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setPunchLoading(false);
     }
-
-    setUser(JSON.parse(user));
-    fetchLeaves(token);
-    fetchBalance(token);
-    setLoading(false);
-  }, []);
+  };
 
   // ==============================
   // APPLY LEAVE
   // ==============================
   const handleApplyLeave = async () => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem("token")||"";
+
     if (!token) return;
 
     if (!fromDate || !toDate || !reason) {
@@ -123,83 +154,149 @@ const Dashboard = () => {
       return;
     }
 
-    if (new Date(fromDate) > new Date(toDate)) {
-      alert("Invalid date range ❌");
-      return;
-    }
-
     try {
-      setSubmitting(true); // ✅ disable button
+      setSubmitting(true);
 
-      const res = await fetch("http://localhost:3001/api/leaves", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          from_date: fromDate,
-          to_date: toDate,
-          reason,
-          type,
-        }),
-      });
+      const res: any = await safeFetch("/leaves", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify({
+    from_date: fromDate,
+    to_date: toDate,
+    reason,
+    type,
+    
+    
 
-      const data = await res.json();
+  }),
+});
 
-      if (!res.ok) {
-        alert(data.error || "Apply failed ❌");
-        setSubmitting(false);
-        return;
-      }
+if (res && res.success) {
+  alert("Leave applied successfully ✅");
+}
 
-      // ✅ refresh
-      await fetchLeaves(token);
+
+      await fetchLeaves(token, user);
+      console.log("REFRESH DONE");
       await fetchBalance(token);
 
-      // reset
       setFromDate("");
       setToDate("");
       setReason("");
       setType("CL");
 
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong ❌");
+    } catch (err: any) {
+      alert(err.message);
     } finally {
       setSubmitting(false);
     }
   };
+const handleAction = async (id: number, status: string) => {
+const token: string = sessionStorage.getItem("token")||"";
+  try {
+    await safeFetch(`/leaves/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    await fetchLeaves(token, token);
+  } catch (err) {
+    alert("Error updating status");
+  }
+};
+  // ==============================
+  // INIT
+  // ==============================
+useEffect(() => {
+  const userStr = sessionStorage.getItem("user");
+  const token = sessionStorage.getItem("token");
+
+  if (!userStr || !token) {
+    navigate("/");
+    return;
+  }
+
+  const parsedUser = JSON.parse(userStr);
+  setUser(parsedUser);
+
+}, []);
+
+useEffect(() => {
+  const token = sessionStorage.getItem("token");
+  if (!user || !token) return;
+
+  fetchLeaves(token, user);
+  fetchBalance(token);
+  fetchAttendance(token);
+
+  setLoading(false);
+}, [user]);
+
+
 
   if (loading) return <h2>Loading...</h2>;
+  console.log("USER:", user);
+console.log("LEAVES:", leaves);
 
-  const isApprover = ["team lead", "manager"].includes(
-    user?.role?.toLowerCase()
-  );
 
-  const myLeaves = leaves.filter(l => l.employee_id === user?.id);
-  const teamLeaves = leaves.filter(l => l.employee_id !== user?.id);
+const myLeaves =
+  user?.role?.toLowerCase() === "team lead"
+    ? leaves // TL → सब देखेगा
+    : leaves.filter((l) => l.employee_id === user?.id); // EMP → अपना
+
 
   return (
-    <div style={{ padding: 20, maxWidth: 600, margin: "auto" }}>
-      
+    <div style={{ padding: 20 }}>
       <h2>Welcome {user?.name}</h2>
-      <p>Role: {user?.role}</p>
+
+      {/* 🔥 ATTENDANCE */}
+      <h3>Attendance</h3>
+      <button onClick={handlePunchIn} disabled={punchLoading}>
+        Punch In
+      </button>
+
+      <button onClick={handlePunchOut} disabled={punchLoading}>
+        Punch Out
+      </button>
+
+      {/* ✅ ATTENDANCE LIST */}
+      <h3>My Attendance</h3>
+      {attendance.map((a) => (
+        <div key={a.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
+          <p>Punch In: {new Date(a.punch_in).toLocaleString()}</p>
+          <p>Punch Out: {a.punch_out ? new Date(a.punch_out).toLocaleString() : "—"}</p>
+
+          {/* 🔥 GOOGLE MAP */}
+          <a
+            href={`https://www.google.com/maps?q=${a.latitude},${a.longitude}`}
+            target="_blank"
+          >
+            View Location 📍
+          </a>
+        </div>
+      ))}
 
       {/* BALANCE */}
       <h3>Leave Balance</h3>
-      {balance ? (
+      {balance && (
         <>
           <p>CL: {balance.CL}</p>
           <p>SL: {balance.SL}</p>
           <p>PL: {balance.PL}</p>
         </>
-      ) : <p>Loading...</p>}
+      )}
 
       {/* APPLY */}
       <h3>Apply Leave</h3>
 
-      <select value={type} onChange={(e) => setType(e.target.value)}>
+      <select value={type} onChange={(e) => setType(e.target.value as LeaveType)}>
         <option value="CL">CL</option>
         <option value="SL">SL</option>
         <option value="PL">PL</option>
@@ -213,12 +310,7 @@ const Dashboard = () => {
       <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
       <br /><br />
 
-      <input
-        value={reason}
-        onChange={(e) => setReason(e.target.value)}
-        placeholder="Reason"
-      />
-
+      <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason" />
       <br /><br />
 
       <button onClick={handleApplyLeave} disabled={submitting}>
@@ -226,65 +318,41 @@ const Dashboard = () => {
       </button>
 
       {/* MY LEAVES */}
-      <h3>My Leaves</h3>
+      <h3>
+  {user?.role?.toLowerCase() === "team lead" ? "Team Leaves" : "My Leaves"}
+</h3>
+{myLeaves.map((l) => (
+  <div key={l.id}>
+    {l.employees?.name || `User-${l.employee_id}`}
+ | {l.type} | {l.status}
 
-      {myLeaves.length === 0 ? (
-        <p>No leaves</p>
-      ) : (
-        myLeaves.map((l) => (
-          <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
-            <p><b>Type:</b> {l.type}</p>
-            <p>{l.from_date} → {l.to_date}</p>
-            <p>
-              Status:{" "}
-              <span style={{
-                color:
-                  l.status === "APPROVED"
-                    ? "green"
-                    : l.status === "REJECTED"
-                    ? "red"
-                    : "orange"
-              }}>
-                {l.status}
-              </span>
-            </p>
-          </div>
-        ))
-      )}
-
-      {/* TEAM */}
-      {isApprover && (
+    {user?.role?.toLowerCase() === "team lead" &&
+      l.status?.toUpperCase() === "PENDING" &&
+      Number(l.employee_id) !== Number(user?.id) && (
         <>
-          <h3>Team Leaves</h3>
+          <button onClick={() => handleAction(l.id, "APPROVED")}>
+            Approve
+          </button>
 
-          {teamLeaves.map((l) => (
-            <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
-              <p><b>{l.employees?.name}</b></p>
-              <p>{l.from_date} → {l.to_date}</p>
-              <p>Status: {l.status}</p>
-
-              {l.status === "PENDING" && (
-                <>
-                  <button onClick={() => updateStatus(l.id, "APPROVED")}>
-                    Approve
-                  </button>
-                  <button onClick={() => updateStatus(l.id, "REJECTED")}>
-                    Reject
-                  </button>
-                </>
-              )}
-            </div>
-          ))}
+          <button onClick={() => handleAction(l.id, "REJECTED")}>
+            Reject
+          </button>
         </>
       )}
+  </div>
+))}
 
-      <br />
-      <button onClick={() => {
-        sessionStorage.clear();
-        navigate("/");
-      }}>
-        Logout
-      </button>
+<br />
+
+<button
+  onClick={() => {
+    sessionStorage.clear();
+    navigate("/");
+  }}
+>
+  Logout
+</button>
+     
     </div>
   );
 };

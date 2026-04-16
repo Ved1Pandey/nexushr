@@ -9,15 +9,21 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  // ✅ already logged in → go dashboard (FIXED)
+  // ✅ already logged in → redirect ONCE only
   useEffect(() => {
-    const token = sessionStorage.getItem("token"); // 🔥 CHANGE
+    const token = sessionStorage.getItem("token");
+
     if (token && token !== "undefined") {
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true }); // 🔥 replace important
     }
-  }, []);
+  }, [navigate]); // ✅ dependency add
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      setError("Enter email & password ❌");
+      return;
+    }
+
     try {
       setLoading(true);
       setError("");
@@ -28,7 +34,7 @@ const Login = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: email.trim(),
+          email: email.trim().toLowerCase(),
           password: password.trim(),
         }),
       });
@@ -40,21 +46,23 @@ const Login = () => {
         return;
       }
 
-      if (!data.token) {
-        setError("Token missing ❌");
+      if (!data.token || !data.user) {
+        setError("Invalid response ❌");
         return;
       }
 
-      // 🔥 CRITICAL FIX (TAB ISOLATION)
+      // ✅ save session
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("user", JSON.stringify(data.user));
 
-      alert("Login Success ✅");
+      // ❌ alert hata (loop cause karta kabhi kabhi)
+      // alert("Login Success ✅");
 
-      navigate("/dashboard");
+      // ✅ single navigation
+      navigate("/dashboard", { replace: true });
 
     } catch (err) {
-      console.error("Login error:", err);
+      console.error(err);
       setError("Server error ❌");
     } finally {
       setLoading(false);
