@@ -42,10 +42,11 @@ const safeFetch = async (endpoint: string, options: any = {}) => {
   // FETCH LEAVES
   // ==============================
 const fetchLeaves = async (token: string, user: any) => {
-  const endpoint =
-    user?.role?.toLowerCase() === "team lead"
-      ? "/team-leaves"
-      : "/leaves";
+const endpoint =
+  user?.role?.toLowerCase() === "team lead" ||
+  user?.role?.toLowerCase() === "manager"
+    ? "/team-leaves"
+    : "/leaves";
 
   const data: any = await safeFetch(endpoint, {
     headers: {
@@ -206,7 +207,7 @@ const token: string = sessionStorage.getItem("token")||"";
       body: JSON.stringify({ status }),
     });
 
-    await fetchLeaves(token, token);
+    await fetchLeaves(token, user);
   } catch (err) {
     alert("Error updating status");
   }
@@ -236,20 +237,27 @@ useEffect(() => {
   fetchBalance(token);
   fetchAttendance(token);
 
-  setLoading(false);
-}, [user]);
+  setLoading(false); 
+},
+ [user]); 
 
 
 
   if (loading) return <h2>Loading...</h2>;
+  
   console.log("USER:", user);
 console.log("LEAVES:", leaves);
+const role = user?.role?.toLowerCase();
 
+const isTL = role === "team lead";
+const isManager = role === "manager";
 
+// 👉 TL + Manager → team leaves (excluding own)
+// 👉 Employee → only own
 const myLeaves =
-  user?.role?.toLowerCase() === "team lead"
-    ? leaves // TL → सब देखेगा
-    : leaves.filter((l) => l.employee_id === user?.id); // EMP → अपना
+  isTL || isManager
+    ? leaves.filter((l) => String(l.employee_id) !== String(user?.id))
+    : leaves.filter((l) => String(l.employee_id) === String(user?.id));
 
 
   return (
@@ -318,31 +326,36 @@ const myLeaves =
       </button>
 
       {/* MY LEAVES */}
-      <h3>
-  {user?.role?.toLowerCase() === "team lead" ? "Team Leaves" : "My Leaves"}
+<h3>
+  {isTL || isManager ? "Team Leaves" : "My Leaves"}
 </h3>
-{myLeaves.map((l) => (
-  <div key={l.id}>
-    {l.employees?.name || `User-${l.employee_id}`}
- | {l.type} | {l.status}
 
-    {user?.role?.toLowerCase() === "team lead" &&
-      l.status?.toUpperCase() === "PENDING" &&
-      Number(l.employee_id) !== Number(user?.id) && (
-        <>
-          <button onClick={() => handleAction(l.id, "APPROVED")}>
-            Approve
-          </button>
-
-          <button onClick={() => handleAction(l.id, "REJECTED")}>
-            Reject
-          </button>
-        </>
-      )}
-  </div>
-))}
 
 <br />
+{myLeaves.map((l) => {
+  console.log("CHECK", l.employee_id, user?.id);
+
+  return (
+    <div key={l.id}>
+      {l.employees?.name || `User-${l.employee_id}`} | {l.type} | {l.status}
+
+{(isTL || isManager) &&
+  l.status?.toUpperCase() === "PENDING" &&
+  String(l.employee_id) !== String(user?.id) && (
+    <>
+      <button onClick={() => handleAction(l.id, "APPROVED")}>
+        Approve
+      </button>
+
+      <button onClick={() => handleAction(l.id, "REJECTED")}>
+        Reject
+      </button>
+    </>
+)}
+
+    </div>
+  );
+})}
 
 <button
   onClick={() => {
