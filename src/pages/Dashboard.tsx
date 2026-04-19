@@ -7,7 +7,7 @@ const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [leaves, setLeaves] = useState<any[]>([]);
-  const [attendance, setAttendance] = useState<any[]>([]); // ✅ NEW
+    const [attendance, setAttendance] = useState<any[]>([]); // ✅ NEW
   const [balance, setBalance] = useState<any>(null);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -42,19 +42,39 @@ const safeFetch = async (endpoint: string, options: any = {}) => {
   // FETCH LEAVES
   // ==============================
 const fetchLeaves = async (token: string, user: any) => {
-const endpoint =
-  user?.role?.toLowerCase() === "team lead" ||
-  user?.role?.toLowerCase() === "manager"
-    ? "/team-leaves"
-    : "/leaves";
+  let allLeaves: any[] = [];
 
-  const data: any = await safeFetch(endpoint, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  // 👉 1. OWN LEAVES (सबके लिए)
+  const own: any = await safeFetch("/leaves", {
+    headers: { Authorization: `Bearer ${token}` },
   });
 
-  setLeaves(Array.isArray(data) ? data : []);
+  if (Array.isArray(own)) {
+    allLeaves = [...own];
+  }
+
+  // 👉 2. TEAM LEAVES (only TL / Manager)
+  if (
+    user?.role?.toLowerCase() === "team lead" ||
+    user?.role?.toLowerCase() === "manager"
+  ) {
+    const team: any = await safeFetch("/team-leaves", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (Array.isArray(team)) {
+      allLeaves = [...allLeaves, ...team];
+    }
+  }
+
+  // 👉 sort latest first
+  const sorted = allLeaves.sort(
+    (a, b) =>
+      new Date(b.from_date).getTime() -
+      new Date(a.from_date).getTime()
+  );
+
+  setLeaves(sorted);
 };
 
   // ==============================
@@ -208,6 +228,7 @@ const token: string = sessionStorage.getItem("token")||"";
     });
 
     await fetchLeaves(token, user);
+    await fetchBalance(token);
   } catch (err) {
     alert("Error updating status");
   }
@@ -252,14 +273,15 @@ const role = user?.role?.toLowerCase();
 const isTL = role === "team lead";
 const isManager = role === "manager";
 
-// 👉 TL + Manager → team leaves (excluding own)
-// 👉 Employee → only own
-const myLeaves =
-  isTL || isManager
-    ? leaves.filter((l) => String(l.employee_id) !== String(user?.id))
-    : leaves.filter((l) => String(l.employee_id) === String(user?.id));
+// 🔹 MY OWN LEAVES (correct)
+const myOwnLeaves = leaves.filter(
+  (l) => String(l.employee_id) === String(user?.id)
+);
 
-
+// 🔹 TEAM LEAVES (ONLY others)
+const teamLeaves = leaves.filter(
+  (l) => String(l.employee_id) !== String(user?.id)
+);
   return (
     <div style={{ padding: 20 }}>
       <h2>Welcome {user?.name}</h2>
@@ -273,10 +295,9 @@ const myLeaves =
       <button onClick={handlePunchOut} disabled={punchLoading}>
         Punch Out
       </button>
-
       {/* ✅ ATTENDANCE LIST */}
       <h3>My Attendance</h3>
-      {attendance.map((a) => (
+      {attendance.map((a:any) => (
         <div key={a.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
           <p>Punch In: {new Date(a.punch_in).toLocaleString()}</p>
           <p>Punch Out: {a.punch_out ? new Date(a.punch_out).toLocaleString() : "—"}</p>
@@ -325,38 +346,76 @@ const myLeaves =
         {submitting ? "Applying..." : "Apply"}
       </button>
 
-      {/* MY LEAVES */}
-<h3>
-  {isTL || isManager ? "Team Leaves" : "My Leaves"}
-</h3>
+{/* ================= MY LEAVES ================= */}
+<h3>My Leaves</h3>
 
+{myOwnLeaves.map((l) => (
+  <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
+    <b>Me</b>
+    <br />
 
-<br />
-{myLeaves.map((l) => {
-  console.log("CHECK", l.employee_id, user?.id);
+    Type: {l.type} | Status: {l.status}
+    <br />
 
-  return (
-    <div key={l.id}>
-      {l.employees?.name || `User-${l.employee_id}`} | {l.type} | {l.status}
+    {l.from_date === l.to_date ? (
+      <p>Date: {new Date(l.from_date).toLocaleDateString()}</p>
+    ) : (
+      <>
+        <p>From: {new Date(l.from_date).toLocaleDateString()}</p>
+        <p>To: {new Date(l.to_date).toLocaleDateString()}</p>
+      </>
+    )}
 
-{(isTL || isManager) &&
-  l.status?.toUpperCase() === "PENDING" &&
-  String(l.employee_id) !== String(user?.id) && (
-    <>
-      <button onClick={() => handleAction(l.id, "APPROVED")}>
-        Approve
-      </button>
+    <p>Reason: {l.reason}</p>
+  </div>
+))}
 
-      <button onClick={() => handleAction(l.id, "REJECTED")}>
-        Reject
-      </button>
-    </>
+{/* ================= TEAM LEAVES ================= */}
+{(isTL || isManager) && (
+  <>
+    <h3>Team Leaves</h3>
+
+    {teamLeaves.map((l) => (
+      <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
+        
+        <b>{l.employees?.name}</b>
+        <br />
+
+        Type: {l.type} | Status: {l.status}
+        <br />
+
+        {l.from_date === l.to_date ? (
+          <p>Date: {new Date(l.from_date).toLocaleDateString()}</p>
+        ) : (
+          <>
+            <p>From: {new Date(l.from_date).toLocaleDateString()}</p>
+            <p>To: {new Date(l.to_date).toLocaleDateString()}</p>
+          </>
+        )}
+
+        <p>Reason: {l.reason}</p>
+
+        <br />
+
+        {l.status?.toUpperCase() === "PENDING" &&
+          String(l.employee_id) !== String(user?.id) && (
+            <>
+              <button onClick={() => handleAction(l.id, "APPROVED")}>
+                Approve
+              </button>
+
+              <button onClick={() => handleAction(l.id, "REJECTED")}>
+                Reject
+              </button>
+            </>
+        )}
+
+      </div>
+    ))}
+
+  </>
 )}
-
-    </div>
-  );
-})}
-
+{/* LOGOUT */}
 <button
   onClick={() => {
     sessionStorage.clear();
@@ -365,9 +424,8 @@ const myLeaves =
 >
   Logout
 </button>
-     
-    </div>
+
+</div>
   );
 };
-
 export default Dashboard;
