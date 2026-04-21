@@ -58,9 +58,10 @@ const fetchLeaves = async (token: string, user: any) => {
     user?.role?.toLowerCase() === "team lead" ||
     user?.role?.toLowerCase() === "manager"
   ) {
-    const team: any = await safeFetch("/team-leaves", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+const team: any = await safeFetch("/team-leaves", {
+  headers: { Authorization: `Bearer ${token}` },
+});
+console.log("TEAM LEAVES:", team);
 
     if (Array.isArray(team)) {
       allLeaves = [...allLeaves, ...team];
@@ -80,13 +81,19 @@ const fetchLeaves = async (token: string, user: any) => {
   // ==============================
   // FETCH BALANCE
   // ==============================
-  const fetchBalance = async (token: string) => {
+const fetchBalance = async (token: string) => {
+  try {
     const data = await safeFetch("/leave-balance", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
+    console.log("BALANCE API RESPONSE:", data); // 👈 ADD THIS
+
     setBalance(data);
-  };
+  } catch (err) {
+    console.log("BALANCE ERROR:", err); // 👈 ADD THIS
+  }
+};
 
   // ==============================
   // FETCH ATTENDANCE ✅ NEW
@@ -266,8 +273,10 @@ useEffect(() => {
 
   if (loading) return <h2>Loading...</h2>;
   
-  console.log("USER:", user);
+console.log("BALANCE STATE:", balance);
+console.log("USER:", user);
 console.log("LEAVES:", leaves);
+console.log("BALANCE API:",balance);
 const role = user?.role?.toLowerCase();
 
 const isTL = role === "team lead";
