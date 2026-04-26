@@ -14,7 +14,7 @@ const Login = () => {
   const token = sessionStorage.getItem("token");
   const user = sessionStorage.getItem("user");
 
-  if (token && user) {
+  if (token && user) { 
     const parsedUser = JSON.parse(user);
 
     if (parsedUser.role === "admin") {
