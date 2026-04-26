@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   // ✅ already logged in → redirect ONCE only
-/* useEffect(() => 
+ useEffect(() => {
   const token = sessionStorage.getItem("token");
   const user = sessionStorage.getItem("user");
 
@@ -23,7 +23,7 @@ const Login = () => {
       navigate("/", { replace: true });
   }
 }
-},[navigate]);*/
+},[navigate]);
 
 const handleLogin = async () => {
   try {
