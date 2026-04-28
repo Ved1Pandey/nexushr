@@ -291,9 +291,34 @@ const myOwnLeaves = leaves.filter(
 const teamLeaves = leaves.filter(
   (l) => String(l.employee_id) !== String(user?.id)
 );
-  return (
+const myPending = myOwnLeaves.filter(l => l.status === "PENDING").length;
+const myApproved = myOwnLeaves.filter(l => l.status === "APPROVED").length;
+const myRejected = myOwnLeaves.filter(l => l.status === "REJECTED").length;
+const pendingCount = teamLeaves.filter(
+  (l) => l.status?.toLowerCase() === "pending"
+).length;
+
+const approvedCount = teamLeaves.filter(
+  (l) => l.status?.toLowerCase() === "approved"
+).length;
+
+const rejectedCount = teamLeaves.filter(
+  (l) => l.status?.toLowerCase() === "rejected"
+).length;  return (
     <div style={{ padding: 20 }}>
       <h2>Welcome {user?.name}</h2>
+{(isTL || isManager) && (
+  <>
+    <h3>Pending: {pendingCount}</h3>
+    <h3>Approved: {approvedCount}</h3>
+    <h3>Rejected: {rejectedCount}</h3>
+  </>
+)}
+
+<h4>My Leaves</h4>
+<p>My Pending: {myPending}</p>
+<p>My Approved: {myApproved}</p>
+<p>My Rejected: {myRejected}</p>
 
       {/* 🔥 ATTENDANCE */}
       <h3>Attendance</h3>
