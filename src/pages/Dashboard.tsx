@@ -16,6 +16,7 @@ const Dashboard = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [punchLoading, setPunchLoading] = useState(false);
+  const [showAttendance, setShowAttendance] = useState(false);
 
   const navigate = useNavigate();
 
@@ -303,48 +304,154 @@ const approvedCount = teamLeaves.filter(
 ).length;
 
 const rejectedCount = teamLeaves.filter(
+
   (l) => l.status?.toLowerCase() === "rejected"
-).length;  return (
-    <div style={{ padding: 20 }}>
+).length;
+// TODAY STATUS
+const today = new Date().toDateString();
+
+const todayRecord = attendance
+  .filter((a) => new Date(a.punch_in).toDateString() === today)
+  .sort((a, b) => new Date(b.punch_in).getTime() - new Date(a.punch_in).getTime())[0];
+
+let todayStatus = "Absent";
+
+if (todayRecord) {
+  if (todayRecord.punch_in && todayRecord.punch_out) {
+    todayStatus = "Present";
+  } else if (todayRecord.punch_in && !todayRecord.punch_out) {
+    todayStatus = "In Progress";
+  }
+}  return (
+    <div style={{
+  padding: 20,
+  maxWidth: 900,
+  margin: "0 auto"
+}}>
       <h2>Welcome {user?.name}</h2>
 {(isTL || isManager) && (
   <>
-    <h3>Pending: {pendingCount}</h3>
-    <h3>Approved: {approvedCount}</h3>
-    <h3>Rejected: {rejectedCount}</h3>
+    <div style={{
+  display: "flex",
+  gap: 20,
+  justifyContent: "center",
+  marginBottom: 20
+}}>
+  
+  <div style={{ border: "1px solid #ccc", padding: 20, borderRadius: 10, width: 120, textAlign: "center" }}>
+    <h2>{pendingCount}</h2>
+    <p>Pending</p>
+  </div>
+
+  <div style={{ border: "1px solid #ccc", padding: 20, borderRadius: 10, width: 120, textAlign: "center" }}>
+    <h2>{approvedCount}</h2>
+    <p>Approved</p>
+  </div>
+
+  <div style={{ border: "1px solid #ccc", padding: 20, borderRadius: 10, width: 120, textAlign: "center" }}>
+    <h2>{rejectedCount}</h2>
+    <p>Rejected</p>
+  </div>
+
+</div>
+
   </>
 )}
 
 <h4>My Leaves</h4>
-<p>My Pending: {myPending}</p>
-<p>My Approved: {myApproved}</p>
-<p>My Rejected: {myRejected}</p>
 
+<div style={{
+  display: "flex",
+  gap: 20,
+  justifyContent: "center",
+  marginBottom: 20
+}}>
+
+  {/* 🟡 Pending */}
+  <div style={{
+    border: "1px solid #facc15",
+    background: "#fef9c3",
+    padding: 15,
+    borderRadius: 10,
+    width: 120,
+    textAlign: "center"
+  }}>
+    <h2>{myPending}</h2>
+    <p style={{ fontSize: 14, color: "#555" }}>Pending</p>
+  </div>
+
+  {/* 🟢 Approved */}
+  <div style={{
+    border: "1px solid #4ade80",
+    background: "#dcfce7",
+    padding: 15,
+    borderRadius: 10,
+    width: 120,
+    textAlign: "center"
+  }}>
+    <h2>{myApproved}</h2>
+    <p style={{ fontSize: 14, color: "#555" }}>Approved</p>
+  </div>
+
+  {/* 🔴 Rejected */}
+  <div style={{
+    border: "1px solid #f87171",
+    background: "#fee2e2",
+    padding: 15,
+    borderRadius: 10,
+    width: 120,
+    textAlign: "center"
+  }}>
+    <h2>{myRejected}</h2>
+    <p style={{ fontSize: 14, color: "#555" }}>Rejected</p>
+  </div>
+
+</div> {/* 👈 My Leaves cards ka end */}
+
+<div style={{ textAlign: "center", marginBottom: 20 }}>
+  <button onClick={() => setShowAttendance(!showAttendance)}>
+    {showAttendance ? "Hide Attendance" : "View Attendance"}
+  </button>
+</div>
       {/* 🔥 ATTENDANCE */}
-      <h3>Attendance</h3>
-      <button onClick={handlePunchIn} disabled={punchLoading}>
-        Punch In
-      </button>
+      {showAttendance && (
+  <>
+    <h3>Attendance</h3>
 
-      <button onClick={handlePunchOut} disabled={punchLoading}>
-        Punch Out
-      </button>
-      {/* ✅ ATTENDANCE LIST */}
-      <h3>My Attendance</h3>
-      {attendance.map((a:any) => (
-        <div key={a.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
-          <p>Punch In: {new Date(a.punch_in).toLocaleString()}</p>
-          <p>Punch Out: {a.punch_out ? new Date(a.punch_out).toLocaleString() : "—"}</p>
+    <button onClick={handlePunchIn} disabled={punchLoading}>
+      Punch In
+    </button>
 
-          {/* 🔥 GOOGLE MAP */}
-          <a
-            href={`https://www.google.com/maps?q=${a.latitude},${a.longitude}`}
-            target="_blank"
-          >
-            View Location 📍
-          </a>
-        </div>
-      ))}
+    <button onClick={handlePunchOut} disabled={punchLoading}>
+      Punch Out
+    </button>
+
+    <h3>My Attendance</h3>
+
+    {attendance.map((a: any) => (
+      <div
+        key={a.id}
+        style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}
+      >
+        <p>Punch In: {new Date(a.punch_in).toLocaleString()}</p>
+        <p>
+          Punch Out:{" "}
+          {a.punch_out
+            ? new Date(a.punch_out).toLocaleString()
+            : "—"}
+        </p>
+
+        <a
+          href={`https://www.google.com/maps?q=${a.latitude},${a.longitude}`}
+          target="_blank"
+        >
+          View Location 📍
+        </a>
+      </div>
+    ))}
+  </>
+)}
+
 
       {/* BALANCE */}
       <h3>Leave Balance</h3>
