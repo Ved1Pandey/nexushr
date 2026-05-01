@@ -322,19 +322,22 @@ if (todayRecord) {
   } else if (todayRecord.punch_in && !todayRecord.punch_out) {
     todayStatus = "In Progress";
   }
-}  return (
+}  
+return (
     <div style={{
   padding: 20,
-  maxWidth: 900,
+  maxWidth: 1100,
   margin: "0 auto"
 }}>
       <h2>Welcome {user?.name}</h2>
 {(isTL || isManager) && (
   <>
+  <h3 style={{ textAlign: "center" }}>Team Leaves</h3>
     <div style={{
   display: "flex",
   gap: 20,
   justifyContent: "center",
+  
   marginBottom: 20
 }}>
   
@@ -358,7 +361,7 @@ if (todayRecord) {
   </>
 )}
 
-<h4>My Leaves</h4>
+
 
 <div style={{
   display: "flex",
@@ -407,12 +410,23 @@ if (todayRecord) {
   </div>
 
 </div> {/* 👈 My Leaves cards ka end */}
-
 <div style={{ textAlign: "center", marginBottom: 20 }}>
-  <button onClick={() => setShowAttendance(!showAttendance)}>
+  <button
+    onClick={() => setShowAttendance(!showAttendance)}
+    style={{
+      background: "#2563eb",
+      color: "white",
+      padding: "10px 20px",
+      borderRadius: 6,
+      border: "none",
+      cursor: "pointer",
+      marginTop: 10
+    }}
+  >
     {showAttendance ? "Hide Attendance" : "View Attendance"}
   </button>
 </div>
+
       {/* 🔥 ATTENDANCE */}
       {showAttendance && (
   <>
@@ -454,7 +468,7 @@ if (todayRecord) {
 
 
       {/* BALANCE */}
-      <h3>Leave Balance</h3>
+      <h3>Leave Balance</h3> 
       {balance && (
         <>
           <p>CL: {balance.CL}</p>
@@ -462,30 +476,48 @@ if (todayRecord) {
           <p>PL: {balance.PL}</p>
         </>
       )}
+<h3>Apply Leave</h3>
 
-      {/* APPLY */}
-      <h3>Apply Leave</h3>
+<select
+  value={type}
+  onChange={(e) => setType(e.target.value as LeaveType)}
+>
+  <option value="CL">CL</option>
+  <option value="SL">SL</option>
+  <option value="PL">PL</option>
+</select>
 
-      <select value={type} onChange={(e) => setType(e.target.value as LeaveType)}>
-        <option value="CL">CL</option>
-        <option value="SL">SL</option>
-        <option value="PL">PL</option>
-      </select>
+<br /><br />
 
-      <br /><br />
+<input
+  type="date"
+  value={fromDate}
+  onChange={(e) => setFromDate(e.target.value)}
+/>
 
-      <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
-      <br /><br />
+<br /><br />
 
-      <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
-      <br /><br />
+<input
+  type="date"
+  value={toDate}
+  onChange={(e) => setToDate(e.target.value)}
+/>
 
-      <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason" />
-      <br /><br />
+<br /><br />
 
-      <button onClick={handleApplyLeave} disabled={submitting}>
-        {submitting ? "Applying..." : "Apply"}
-      </button>
+<input
+  value={reason}
+  onChange={(e) => setReason(e.target.value)}
+  placeholder="Reason"
+/>
+
+<br /><br />
+
+<button onClick={handleApplyLeave} disabled={submitting}>
+  {submitting ? "Applying..." : "Apply"}
+</button>
+
+
 
 {/* ================= MY LEAVES ================= */}
 <h3>My Leaves</h3>
