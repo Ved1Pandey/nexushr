@@ -312,17 +312,22 @@ const today = new Date().toDateString();
 
 const todayRecord = attendance
   .filter((a) => new Date(a.punch_in).toDateString() === today)
-  .sort((a, b) => new Date(b.punch_in).getTime() - new Date(a.punch_in).getTime())[0];
+  .sort(
+    (a, b) =>
+      new Date(b.punch_in).getTime() -
+      new Date(a.punch_in).getTime()
+  )[0]; // ✅ latest record
 
 let todayStatus = "Absent";
 
-if (todayRecord) {
-  if (todayRecord.punch_in && todayRecord.punch_out) {
+if (todayRecord && todayRecord.punch_in) {
+  if (todayRecord.punch_out) {
     todayStatus = "Present";
-  } else if (todayRecord.punch_in && !todayRecord.punch_out) {
+  } else {
     todayStatus = "In Progress";
   }
-}  
+}
+
 return (
     <div style={{
   padding: 20,
@@ -602,4 +607,5 @@ return (
   );
 };
 export default Dashboard;
+// test change
 // test change
