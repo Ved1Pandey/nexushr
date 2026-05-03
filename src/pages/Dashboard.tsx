@@ -1,23 +1,30 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+type Attendance = {
+  id: number;
+  punch_in: string;
+  punch_out?: string;
+  latitude?: number;
+  longitude?: number;
+};
+
 type LeaveType = "CL" | "SL" | "PL";
 
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [leaves, setLeaves] = useState<any[]>([]);
-    const [attendance, setAttendance] = useState<any[]>([]); // ✅ NEW
+  const [attendance, setAttendance] = useState<Attendance[]>([]); // ✅ NEW
   const [balance, setBalance] = useState<any>(null);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [reason, setReason] = useState("");
   const [type, setType] = useState<LeaveType>("CL");
-
   const [submitting, setSubmitting] = useState(false);
   const [punchLoading, setPunchLoading] = useState(false);
   const [showAttendance, setShowAttendance] = useState(false);
-
+  
   const navigate = useNavigate();
 
   // ==============================
@@ -223,6 +230,8 @@ if (res && res.success) {
       setSubmitting(false);
     }
   };
+  
+
 const handleAction = async (id: number, status: string) => {
 const token: string = sessionStorage.getItem("token")||"";
   try {
@@ -307,20 +316,23 @@ const rejectedCount = teamLeaves.filter(
 
   (l) => l.status?.toLowerCase() === "rejected"
 ).length;
-// TODAY STATUS
+
 const today = new Date().toDateString();
 
 const todayRecord = attendance
-  .filter((a) => new Date(a.punch_in).toDateString() === today)
+  .filter((a: Attendance) => 
+    new Date(a.punch_in).toDateString() === today
+  )
   .sort(
-    (a, b) =>
+    (a: Attendance, b: Attendance) =>
       new Date(b.punch_in).getTime() -
       new Date(a.punch_in).getTime()
-  )[0]; // ✅ latest record
+  )[0] as Attendance | undefined;
+
 
 let todayStatus = "Absent";
 
-if (todayRecord && todayRecord.punch_in) {
+if (todayRecord?.punch_in) {
   if (todayRecord.punch_out) {
     todayStatus = "Present";
   } else {
@@ -335,6 +347,7 @@ return (
   margin: "0 auto"
 }}>
       <h2>Welcome {user?.name}</h2>
+      <h3> Today Status: {todayStatus}</h3>
 {(isTL || isManager) && (
   <>
   <h3 style={{ textAlign: "center" }}>Team Leaves</h3>
@@ -447,7 +460,7 @@ return (
 
     <h3>My Attendance</h3>
 
-    {attendance.map((a: any) => (
+    {attendance.map((a: Attendance) => (
       <div
         key={a.id}
         style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}
@@ -607,5 +620,6 @@ return (
   );
 };
 export default Dashboard;
+// test change
 // test change
 // test change

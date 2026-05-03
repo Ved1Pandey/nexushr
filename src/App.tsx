@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./Login";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
+import Career from "./pages/Career";
 
 function App() {
   return (
@@ -17,9 +18,11 @@ function App() {
             </ProtectedRoute>
           }
         />
+       <Route path="/career" element={<Career />} />    
       </Routes>
     </BrowserRouter>
   );
 }
+
 
 export default App;
