@@ -35,9 +35,11 @@ if (!uploadData.text || uploadData.text.length < 50) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          resumeText: uploadData.text,
-          jobDesc,
-        }),
+  resumeText: uploadData.text,
+  jobDesc,
+  candidateId: uploadData.candidateId,
+}),
+
       });
 
       const matchData = await matchRes.json();
