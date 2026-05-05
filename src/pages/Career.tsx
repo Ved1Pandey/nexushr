@@ -22,6 +22,7 @@ const Career = () => {
       });
 
       const uploadData = await uploadRes.json();
+      
       console.log("UPLOAD DATA:", uploadData);
 console.log("RESUME TEXT LENGTH:", uploadData.text?.length);
 
@@ -31,18 +32,18 @@ if (!uploadData.text || uploadData.text.length < 50) {
 }
  
       // 2️⃣ Match score
-      const matchRes = await fetch("http://localhost:3001/api/match", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-  resumeText: uploadData.text,
-  jobDesc,
-  candidateId: uploadData.candidateId,
-}),
+console.log("UPLOAD DATA:", uploadData);
+const matchRes = await fetch("http://localhost:3001/api/match", 
+  {  method: "POST",
+    headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+resumeText: uploadData.text,
+    jobDesc,
+candidateId: uploadData.candidateId,
+  }),
+});
 
-      });
-
-      const matchData = await matchRes.json();
+    const matchData = await matchRes.json();
 
       setScore(matchData.score);
 
