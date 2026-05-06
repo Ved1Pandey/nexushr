@@ -14,6 +14,7 @@ const Career = () => {
     try {
       const formData = new FormData();
       formData.append("resume", resumeFile);
+      formData.append("email", "ved@test.com");
 
       // 1️⃣ Upload resume
       const uploadRes = await fetch("http://localhost:3001/api/upload-resume", {
