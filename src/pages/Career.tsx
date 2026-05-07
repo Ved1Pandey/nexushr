@@ -35,8 +35,7 @@ if (!uploadData.text || uploadData.text.length < 50) {
       // 2️⃣ Match score
 console.log("UPLOAD DATA:", uploadData);
 const matchRes = await fetch("http://localhost:3001/api/match", 
-  {  method: "POST",
-    headers: { "Content-Type": "application/json" },
+  { method: "POST",
   body: JSON.stringify({
 resumeText: uploadData.text,
     jobDesc,
