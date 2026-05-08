@@ -3,6 +3,7 @@ import Login from "./Login";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import Career from "./pages/Career";
+import Signup from "./pages/Signup";
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-       <Route path="/career" element={<Career />} />    
+       <Route path="/career" element={<Career />} />
+       <Route path="/signup" element={<Signup />} />
       </Routes>
     </BrowserRouter>
   );

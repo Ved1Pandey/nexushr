@@ -68,6 +68,35 @@ const Login = () => {
       setLoading(false);
     }
   };
+  const handleSignup = async () => {
+  try {
+    const res = await fetch("http://localhost:3001/api/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Signup failed ❌");
+      return;
+    }
+
+    alert("Signup success ✅");
+
+    navigate("/career");
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error ❌");
+  }
+};
 
   return (
     <div style={{ padding: 20 }}>
@@ -93,6 +122,9 @@ const Login = () => {
       <button onClick={handleLogin} disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </button>
+      <button onClick={handleSignup}>
+      Sign Up
+   </button>
     </div>
   );
 };
