@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
 
   const handleSignup = async () => {
     try {
@@ -33,6 +36,7 @@ const Signup = () => {
         ]);
 
       alert("Signup success ✅");
+      navigate("/candidate-dashboard");
 
     } catch {
       alert("Signup failed ❌");
