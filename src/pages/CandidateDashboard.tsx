@@ -15,8 +15,7 @@ useEffect(() => {
   getUser();
 }, []);
   const [file, setFile] = useState<File | null>(null);
-
-  const handleUpload = async () => {
+const handleUpload = async () => {
 
   if (!file) {
     alert("Choose resume first ❌");
@@ -25,12 +24,13 @@ useEffect(() => {
 
   const fileName = `${Date.now()}-${file.name}`;
 
-  const { error } = await supabase.storage
+  const { error: uploadError } = await supabase.storage
     .from("resumes")
     .upload(fileName, file);
 
-  if (error) {
-    alert(error.message);
+  if (uploadError) {
+    console.log(uploadError);
+    alert(uploadError.message);
     return;
   }
 
@@ -40,14 +40,23 @@ useEffect(() => {
 
   const resumeUrl = data.publicUrl;
 
-  await supabase
-    .from("resumes")
+  const { error: insertError } = await supabase
+    .from("candidate_profiles")
     .insert([
       {
+        name: user?.email?.split("@")[0],
         email: user?.email,
+        phone: "9999999999",
         resume_url: resumeUrl,
       },
     ]);
+
+  console.log(insertError);
+
+  if (insertError) {
+    alert(insertError.message);
+    return;
+  }
 
   alert("Resume uploaded ✅");
 };

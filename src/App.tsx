@@ -5,6 +5,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Career from "./pages/Career";
 import Signup from "./pages/Signup";
 import CandidateDashboard from "./pages/CandidateDashboard";
+import AdminDashboard from "./Admin/pages/AdminDashboard";
 
 function App() {
   return (
@@ -24,10 +25,10 @@ function App() {
         />
        <Route path="/career" element={<Career />} />
        <Route path="/signup" element={<Signup />} />
-       <Route
-  path="/candidate-dashboard"
-  element={<CandidateDashboard />}
-/>
+       <Route path="/candidate-dashboard"element={<CandidateDashboard />}/>
+       <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
+
 
       </Routes>
     </BrowserRouter>
