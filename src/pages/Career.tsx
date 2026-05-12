@@ -1,6 +1,19 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
 const Career = () => {
+  const [user, setUser] = useState<any>(null);
+
+useEffect(() => {
+  const getUser = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    setUser(user);
+  };
+
+  getUser();
+}, []);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [jobDesc, setJobDesc] = useState("");
   const [score, setScore] = useState("");
@@ -24,7 +37,24 @@ const Career = () => {
 
       const uploadData = await uploadRes.json();
       
-      console.log("UPLOAD DATA:", uploadData);
+   console.log("UPLOAD DATA:", uploadData);
+
+const resumeUrl = uploadData?.publicUrl;
+
+const { data: insertData, error: insertError } = await supabase
+  .from("candidate_profiles")
+  .insert([
+    {
+      name: user?.email?.split("@")[0],
+      email: user?.email,
+      phone: "9999999999",
+      resume_url: resumeUrl,
+    },
+  ]);
+
+console.log("INSERT DATA:", insertData);
+console.log("INSERT ERROR:", insertError);
+
 console.log("RESUME TEXT LENGTH:", uploadData.text?.length);
 
 if (!uploadData.text || uploadData.text.length < 50) {

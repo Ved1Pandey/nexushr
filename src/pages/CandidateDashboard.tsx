@@ -39,26 +39,27 @@ const handleUpload = async () => {
     .getPublicUrl(fileName);
 
   const resumeUrl = data.publicUrl;
+const { data: insertedData, error: insertError } = await supabase
+  .from("candidate_profiles")
+  .insert([
+    {
+      name: user?.email?.split("@")[0],
+      email: user?.email,
+      phone: "9999999999",
+      resume_url: resumeUrl,
+    },
+  ])
+  .select();
 
-  const { error: insertError } = await supabase
-    .from("candidate_profiles")
-    .insert([
-      {
-        name: user?.email?.split("@")[0],
-        email: user?.email,
-        phone: "9999999999",
-        resume_url: resumeUrl,
-      },
-    ]);
+console.log("INSERT DATA:", insertedData);
+console.log("INSERT ERROR:", insertError);
 
-  console.log(insertError);
+if (insertError) {
+  alert(insertError.message);
+  return;
+}
 
-  if (insertError) {
-    alert(insertError.message);
-    return;
-  }
-
-  alert("Resume uploaded ✅");
+alert("Resume uploaded ✅");
 };
   return (
     <div style={{ padding: 20 }}>
