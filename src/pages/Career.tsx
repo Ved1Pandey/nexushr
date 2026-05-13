@@ -41,19 +41,31 @@ useEffect(() => {
 
 const resumeUrl = uploadData?.publicUrl;
 
+
+const { data: existingUser } = await supabase
+  .from("candidate_profiles")
+  .select("*")
+  .eq("email", user?.email)
+  .single();
+if (existingUser) {
+  alert("Profile already exists ✅");
+  return;
+}
+
 const { data: insertData, error: insertError } = await supabase
   .from("candidate_profiles")
   .insert([
     {
       name: user?.email?.split("@")[0],
       email: user?.email,
-      phone: "9999999999",
+      phone: "",
       resume_url: resumeUrl,
     },
   ]);
 
 console.log("INSERT DATA:", insertData);
 console.log("INSERT ERROR:", insertError);
+
 
 console.log("RESUME TEXT LENGTH:", uploadData.text?.length);
 
