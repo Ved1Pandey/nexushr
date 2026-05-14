@@ -54,14 +54,17 @@ if (existingUser) {
 
 const { data: insertData, error: insertError } = await supabase
   .from("candidate_profiles")
-  .insert([
-    {
-      name: user?.email?.split("@")[0],
-      email: user?.email,
-      phone: "",
-      resume_url: resumeUrl,
-    },
-  ]);
+.insert([
+  {
+    name: user?.email?.split("@")[0],
+    email: user?.email,
+    phone: "",
+    resume_url: resumeUrl,
+    resume_text: uploadData.text,
+    skills: jobDesc,
+  },
+]);
+
 
 console.log("INSERT DATA:", insertData);
 console.log("INSERT ERROR:", insertError);
@@ -92,11 +95,43 @@ const matchRes = await fetch(
     }),
   }
 );
+await matchRes.json();
+
+const skillWeights = {
+  "SAP SD": 10,
+  "Order Management": 8,
+  "OTC": 8,
+  "SAP MM": 3,
+  "SAP FICO": 3,
+  "Excel": 2,
+  "Power BI": 2,
+};
+
+let totalWeight = 0;
+let matchedWeight = 0;
+
+Object.entries(skillWeights).forEach(([skill, weight]) => {
+
+  totalWeight += Number(weight);
+
+  if (
+    uploadData.text
+      ?.toLowerCase()
+      .includes(skill.toLowerCase())
+  ) {
+    matchedWeight += Number(weight);
+  }
+
+});
+
+const finalScore = (
+  (matchedWeight / totalWeight) * 100
+).toFixed(2);
+
+console.log("FINAL ATS SCORE:", finalScore);
 
 
-    const matchData = await matchRes.json();
-
-      setScore(matchData.score);
+      setScore(finalScore);
 
     } catch {
       alert("Error ❌");
