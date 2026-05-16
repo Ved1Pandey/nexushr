@@ -11,8 +11,10 @@ const AdminDashboard = () => {
   const fetchCandidates = async () => {
     const { data, error } = await supabase
       .from("candidate_profiles")
-      .select("*");
+      .select("*")
+      .order("created_at", { ascending: false });
       console.log(data);
+      setCandidates(data||[]);
 console.log(error);
 
     if (error) {

@@ -102,23 +102,23 @@ const skillWeights = {
   "Excel": 2,
   "Power BI": 2,
 };
-
-let totalWeight = 0;
 let matchedWeight = 0;
 
 Object.entries(skillWeights).forEach(([skill, weight]) => {
 
-  totalWeight += Number(weight);
-
   if (
-    uploadData.text
-      ?.toLowerCase()
-      .includes(skill.toLowerCase())
+    uploadData.text.toLowerCase().includes(skill.toLowerCase()) &&
+    jobDesc.toLowerCase().includes(skill.toLowerCase())
   ) {
     matchedWeight += Number(weight);
   }
 
 });
+
+const totalWeight = Object.values(skillWeights).reduce(
+  (a, b) => a + Number(b),
+  0
+);
 
 const finalScore = (
   (matchedWeight / totalWeight) * 100
@@ -126,8 +126,7 @@ const finalScore = (
 
 console.log("FINAL ATS SCORE:", finalScore);
 
-
-      setScore(finalScore);
+setScore(finalScore);
 
     } catch {
       alert("Error ❌");
