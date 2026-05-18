@@ -14,12 +14,29 @@ useEffect(() => {
 
   getUser();
 }, []);
+useEffect(() => {
+
+  const fetchJobs = async () => {
+
+    const { data } = await supabase
+      .from("Jobs")
+      .select("*");
+
+    setJobs(data || []);
+  };
+
+  fetchJobs();
+
+}, []);
+
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [jobDesc, setJobDesc] = useState("");
   const [score, setScore] = useState("");
+  const [jobs, setJobs] = useState<any[]>([]);
+const [selectedJob, setSelectedJob] = useState("");
 
   const handleMatch = async () => {
-    if (!resumeFile || !jobDesc) {
+    if (!resumeFile || !selectedJob) {
       alert("Upload resume + enter job description");
       return;
     }
@@ -127,6 +144,19 @@ const finalScore = (
 console.log("FINAL ATS SCORE:", finalScore);
 
 setScore(finalScore);
+await supabase
+  .from("applications")
+  .insert([
+    {
+      candidate_name: user?.email?.split("@")[0],
+      candidate_email: user?.email,
+      job_id: selectedJob,
+      resume_url: resumeUrl,
+      resume_text: uploadData.text,
+      score: finalScore,
+      status: "Applied",
+    },
+  ]);
 
     } catch {
       alert("Error ❌");
@@ -143,7 +173,27 @@ setScore(finalScore);
       />
 
       <br /><br />
+<select
+  value={selectedJob}
+  onChange={(e) => setSelectedJob(e.target.value)}
+>
 
+  <option value="">
+    Select Job
+  </option>
+
+  {jobs.map((job) => (
+    <option
+      key={job.id}
+      value={job.id}
+    >
+      {job.title}
+    </option>
+  ))}
+
+</select>
+
+<br /><br />
       <textarea
         placeholder="Paste Job Description"
         value={jobDesc}
