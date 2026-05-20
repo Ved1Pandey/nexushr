@@ -9,7 +9,7 @@ const CreateJob = () => {
   const createJob = async () => {
 
     const { data, error } = await supabase
-      .from("Jobs")
+      .from("jobs")
       .insert([
         {
           title,
@@ -35,7 +35,7 @@ const CreateJob = () => {
         onChange={(e) => setTitle(e.target.value)}
       />
 
-      <br /><br />
+      <br /><br />  
 
       <textarea
         placeholder="Job Description"

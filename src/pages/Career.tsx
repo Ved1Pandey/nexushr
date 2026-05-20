@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 const Career = () => {
-  const [user, setUser] = useState<any>(null);
+const [user, setUser] = useState<any>(null);
 
 useEffect(() => {
   const getUser = async () => {
@@ -18,9 +18,15 @@ useEffect(() => {
 
   const fetchJobs = async () => {
 
-    const { data } = await supabase
-      .from("Jobs")
-      .select("*");
+    const { data, error } = await supabase
+  .from("jobs")
+  .select("*");
+
+console.log("JOBS:", data);
+console.log("JOBS ERROR:", error);
+
+setJobs(data || []);
+
 
     setJobs(data || []);
   };
@@ -30,14 +36,16 @@ useEffect(() => {
 }, []);
 
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [jobDesc, setJobDesc] = useState("");
   const [score, setScore] = useState("");
   const [jobs, setJobs] = useState<any[]>([]);
 const [selectedJob, setSelectedJob] = useState("");
+const selectedJobData = jobs.find(
+  (job) => job.id == selectedJob
+);
 
   const handleMatch = async () => {
     if (!resumeFile || !selectedJob) {
-      alert("Upload resume + enter job description");
+      alert("Upload resume + select job");
       return;
     }
 
@@ -68,7 +76,7 @@ const { data: insertData, error: insertError } = await supabase
         phone: "",
         resume_url: resumeUrl,
         resume_text: uploadData.text,
-        skills: jobDesc,
+        skills: selectedJobData?.description,
       },
     ],
     {
@@ -103,7 +111,8 @@ const matchRes = await fetch(
 
     body: JSON.stringify({
       text: uploadData.text,
-      jobDesc: jobDesc,
+      jobDesc: jobs.find((j) => j.id == 
+      selectedJob)?.description || "",
       candidateId: uploadData.candidateId,
     }),
   }
@@ -125,7 +134,9 @@ Object.entries(skillWeights).forEach(([skill, weight]) => {
 
   if (
     uploadData.text.toLowerCase().includes(skill.toLowerCase()) &&
-    jobDesc.toLowerCase().includes(skill.toLowerCase())
+    selectedJobData?.description
+      ?.toLowerCase()
+      .includes(skill.toLowerCase())
   ) {
     matchedWeight += Number(weight);
   }
@@ -144,19 +155,23 @@ const finalScore = (
 console.log("FINAL ATS SCORE:", finalScore);
 
 setScore(finalScore);
-await supabase
+const { data: appData, error: appError } = await supabase
   .from("applications")
   .insert([
     {
       candidate_name: user?.email?.split("@")[0],
       candidate_email: user?.email,
       job_id: selectedJob,
-      resume_url: resumeUrl,
-      resume_text: uploadData.text,
       score: finalScore,
       status: "Applied",
     },
-  ]);
+  ])
+  .select();
+
+console.log("APP DATA:", appData);
+console.log("APP ERROR:", appError);
+
+
 
     } catch {
       alert("Error ❌");
@@ -194,13 +209,7 @@ await supabase
 </select>
 
 <br /><br />
-      <textarea
-        placeholder="Paste Job Description"
-        value={jobDesc}
-        onChange={(e) => setJobDesc(e.target.value)}
-      />
 
-      <br /><br />
 
       <button onClick={handleMatch}>
         Check Match
