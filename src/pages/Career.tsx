@@ -162,10 +162,12 @@ const { data: appData, error: appError } = await supabase
       candidate_name: user?.email?.split("@")[0],
       candidate_email: user?.email,
       job_id: selectedJob,
+      resume_url: resumeUrl,
       score: finalScore,
       status: "Applied",
     },
   ])
+
   .select();
 
 console.log("APP DATA:", appData);

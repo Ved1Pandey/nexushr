@@ -10,7 +10,7 @@ const AdminDashboard = () => {
 
   const fetchCandidates = async () => {
     const { data, error } = await supabase
-      .from("candidate_profiles")
+      .from("applications")
       .select("*")
       .order("created_at", { ascending: false });
       console.log(data);
@@ -26,38 +26,43 @@ console.log(error);
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>HR Dashboard ✅</h1>
+  <div style={{ padding: 20 }}>
+    <h1>HR Dashboard ✅</h1>
 
-      <h2>All Candidates</h2>
+    <h2>Applications</h2>
 
-      {candidates.map((candidate) => (
-        <div
-          key={candidate.id}
-          style={{
-            border: "1px solid gray",
-            padding: 10,
-            marginBottom: 10,
-          }}
-        >
-          <h3>{candidate.name}</h3>
+    {candidates.map((candidate) => (
+      <div
+        key={candidate.id}
+        style={{
+          border: "1px solid gray",
+          padding: 10,
+          marginBottom: 10,
+        }}
+      >
+<h3>{candidate.candidate_name}</h3>
 
-          <p>Email: {candidate.email}</p>
+<p>Email: {candidate.candidate_email}</p>
 
-          <p>Phone: {candidate.phone}</p>
+<p>Job ID: {candidate.job_id}</p>
 
-         {candidate.resume_url && (
+<p>Score: {candidate.score}%</p>
+
+<p>Status: {candidate.status}</p>
+
+{candidate.resume_url && (
   <a
     href={candidate.resume_url}
     target="_blank"
+    rel="noreferrer"
   >
     View Resume
   </a>
 )}
-        </div>
-      ))}
-    </div>
-  );
+      </div>
+    ))}
+  </div>
+);
 };
 
 export default AdminDashboard;
