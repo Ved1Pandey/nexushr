@@ -65,6 +65,9 @@ const selectedJobData = jobs.find(
    console.log("UPLOAD DATA:", uploadData);
 
 const resumeUrl = uploadData?.publicUrl;
+console.log("UPLOAD DATA FULL:", uploadData);
+console.log("RESUME URL:", resumeUrl);
+
 
 const { data: insertData, error: insertError } = await supabase
   .from("candidate_profiles")
@@ -92,6 +95,8 @@ console.log("INSERT ERROR:", insertError);
 
 
 console.log("RESUME TEXT LENGTH:", uploadData.text?.length);
+console.log("RESUME TEXT:");
+console.log(uploadData.text);
 
 if (!uploadData.text || uploadData.text.length < 50) {
   alert("Resume parsing failed ❌");
@@ -131,6 +136,13 @@ const skillWeights = {
 let matchedWeight = 0;
 
 Object.entries(skillWeights).forEach(([skill, weight]) => {
+  console.log(
+  skill,
+  uploadData.text.toLowerCase().includes(skill.toLowerCase()),
+  selectedJobData?.description
+    ?.toLowerCase()
+    .includes(skill.toLowerCase())
+);
 
   if (
     uploadData.text.toLowerCase().includes(skill.toLowerCase()) &&

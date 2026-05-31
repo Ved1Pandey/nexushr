@@ -24,6 +24,22 @@ console.log(error);
 
     setCandidates(data || []);
   };
+const updateStatus = async (
+  id: number,
+  status: string
+) => {
+  const { error } = await supabase
+    .from("applications")
+    .update({ status })
+    .eq("id", id);
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  fetchCandidates();
+}; 
 
   return (
   <div style={{ padding: 20 }}>
@@ -49,6 +65,34 @@ console.log(error);
 <p>Score: {candidate.score}%</p>
 
 <p>Status: {candidate.status}</p>
+<br />
+
+<button
+  onClick={() =>
+    updateStatus(
+      candidate.id,
+      "Shortlisted"
+    )
+  }
+>
+  Shortlist
+</button>
+
+<button
+  style={{ marginLeft: 10 }}
+  onClick={() =>
+    updateStatus(
+      candidate.id,
+      "Rejected"
+    )
+  }
+>
+  Reject
+</button>
+
+<br />
+<br />
+
 
 {candidate.resume_url && (
   <a
