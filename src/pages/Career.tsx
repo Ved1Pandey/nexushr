@@ -122,51 +122,12 @@ const matchRes = await fetch(
     }),
   }
 );
-await matchRes.json();
+const matchData = await matchRes.json();
 
-const skillWeights = {
-  "SAP SD": 10,
-  "Order Management": 8,
-  "OTC": 8,
-  "SAP MM": 3,
-  "SAP FICO": 3,
-  "Excel": 2,
-  "Power BI": 2,
-};
-let matchedWeight = 0;
+console.log("MATCH API:", matchData);
 
-Object.entries(skillWeights).forEach(([skill, weight]) => {
-  console.log(
-  skill,
-  uploadData.text.toLowerCase().includes(skill.toLowerCase()),
-  selectedJobData?.description
-    ?.toLowerCase()
-    .includes(skill.toLowerCase())
-);
+setScore(matchData.score);
 
-  if (
-    uploadData.text.toLowerCase().includes(skill.toLowerCase()) &&
-    selectedJobData?.description
-      ?.toLowerCase()
-      .includes(skill.toLowerCase())
-  ) {
-    matchedWeight += Number(weight);
-  }
-
-});
-
-const totalWeight = Object.values(skillWeights).reduce(
-  (a, b) => a + Number(b),
-  0
-);
-
-const finalScore = (
-  (matchedWeight / totalWeight) * 100
-).toFixed(2);
-
-console.log("FINAL ATS SCORE:", finalScore);
-
-setScore(finalScore);
 const { data: appData, error: appError } = await supabase
   .from("applications")
   .insert([
@@ -175,11 +136,10 @@ const { data: appData, error: appError } = await supabase
       candidate_email: user?.email,
       job_id: selectedJob,
       resume_url: resumeUrl,
-      score: finalScore,
+      score: matchData.score,
       status: "Applied",
     },
   ])
-
   .select();
 
 console.log("APP DATA:", appData);
