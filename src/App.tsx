@@ -7,6 +7,8 @@ import Signup from "./pages/Signup";
 import CandidateDashboard from "./pages/CandidateDashboard";
 import AdminDashboard from "./Admin/pages/AdminDashboard";
 import CreateJob from "./Admin/pages/CreateJob";
+import Applications from "./Admin/pages/Applications";
+
 
 function App() {
   return (
@@ -29,7 +31,8 @@ function App() {
        <Route path="/candidate-dashboard"element={<CandidateDashboard />}/>
        <Route path="/admin-dashboard" element={<AdminDashboard />} />
        <Route path="/create-job" element={<CreateJob />}/>
-
+       <Route path="/create-job" element={<CreateJob />} />
+       <Route path="/applications" element={<Applications />} />
 
 
       </Routes>
