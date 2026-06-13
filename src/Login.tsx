@@ -14,7 +14,7 @@ const Login = () => {
     const token = sessionStorage.getItem("token");
 
     if (token && token !== "undefined") {
-      navigate("/dashboard", { replace: true }); // 🔥 replace important
+      navigate("/admin-dashboard", { replace: true }); // 🔥 replace important
     }
   }, [navigate]); // ✅ dependency add
 
@@ -40,7 +40,7 @@ const Login = () => {
       });
 
       const data = await res.json();
-
+      console.log("LOGIN DATA:", data);
       if (!res.ok) {
         setError(data.error || "Login failed ❌");
         return;
@@ -59,7 +59,7 @@ const Login = () => {
       // alert("Login Success ✅");
 
       // ✅ single navigation
-      navigate("/dashboard", { replace: true });
+      navigate("/admin-dashboard", { replace: true });
 
     } catch (err) {
       console.error(err);
