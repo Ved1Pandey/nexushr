@@ -3,27 +3,39 @@ import { supabase } from "../../lib/supabase";
 
 const AdminDashboard = () => {
   const [candidates, setCandidates] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<any[]>([]);
 
   useEffect(() => {
     fetchCandidates();
+    fetchJobs();
   }, []);
+const fetchCandidates = async () => {
+  const { data, error } = await supabase
+    .from("applications")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-  const fetchCandidates = async () => {
-    const { data, error } = await supabase
-      .from("applications")
-      .select("*")
-      .order("created_at", { ascending: false });
-      console.log(data);
-      setCandidates(data||[]);
-console.log(error);
+  if (error) {
+    console.log(error);
+    return;
+  }
 
-    if (error) {
-      console.log(error);
-      return;
-    }
+  setCandidates(data || []);
+};
 
-    setCandidates(data || []);
-  };
+const fetchJobs = async () => {
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("*");
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  setJobs(data || []);
+};
+
 const updateStatus = async (
   id: number,
   status: string
@@ -50,6 +62,16 @@ const updateStatus = async (
   gap: "20px",
   marginBottom: "20px"
 }}>
+  <div
+  style={{
+    padding: "20px",
+    background: "#dbeafe",
+    borderRadius: "10px"
+  }}
+>
+  <h3>Jobs</h3>
+  <h2>{jobs.length}</h2>
+</div>
   <div style={{
     padding: "20px",
     background: "#d4edda",
@@ -89,6 +111,30 @@ const updateStatus = async (
     </h2>
   </div>
 </div>
+
+<h2>Payroll</h2>
+
+<div
+  style={{
+    border: "1px solid #ccc",
+    padding: 20,
+    borderRadius: 10,
+    marginBottom: 20
+  }}
+>
+  <h3>Upcoming Feature 🚀</h3>
+  <p>Payroll module coming soon.</p>
+</div>
+
+<h2>Calendar</h2>
+
+<input
+  type="date"
+  style={{
+    padding: 10,
+    marginBottom: 20
+  }}
+/>
     <h2>Applications</h2>
 
     {candidates.map((candidate) => (
@@ -103,8 +149,7 @@ const updateStatus = async (
 <h3>{candidate.candidate_name}</h3>
 
 <p>Email: {candidate.candidate_email}</p>
-
-<p>Job:{candidate.jobs?.title || "Unknown Job"}</p>
+<p>Job ID: {candidate.job_id}</p>
 
 
 <p>Score: {candidate.score}%</p>
