@@ -112,21 +112,8 @@ const updateStatus = async (
   </div>
 </div>
 
-<h2>Payroll</h2>
 
-<div
-  style={{
-    border: "1px solid #ccc",
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20
-  }}
->
-  <h3>Upcoming Feature 🚀</h3>
-  <p>Payroll module coming soon.</p>
-</div>
-
-<h2>Calendar</h2>
+<h2>Team Calendar</h2>
 
 <input
   type="date"
@@ -195,8 +182,23 @@ const updateStatus = async (
 )}
       </div>
     ))}
+    <h2>Payroll</h2>
+
+<div
+  style={{
+    border: "1px solid #ccc",
+    padding: 20,
+    borderRadius: 10,
+    marginBottom: 20
+  }}
+>
+  <h3>Upcoming Feature 🚀</h3>
+  <p>Payroll module coming soon.</p>
+</div>
+
   </div>
 );
 };
+
 
 export default AdminDashboard;

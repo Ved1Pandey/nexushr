@@ -52,7 +52,6 @@ const safeFetch = async (endpoint: string, options: any = {}) => {
 const fetchLeaves = async (token: string, user: any) => {
   let allLeaves: any[] = [];
 
-  // 👉 1. OWN LEAVES (सबके लिए)
   const own: any = await safeFetch("/leaves", {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -61,22 +60,30 @@ const fetchLeaves = async (token: string, user: any) => {
     allLeaves = [...own];
   }
 
-  // 👉 2. TEAM LEAVES (only TL / Manager)
   if (
     user?.role?.toLowerCase() === "team lead" ||
     user?.role?.toLowerCase() === "manager"
   ) {
-const team: any = await safeFetch("/team-leaves", {
-  headers: { Authorization: `Bearer ${token}` },
-});
-console.log("TEAM LEAVES:", team);
+    const team: any = await safeFetch("/team-leaves", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    console.log("TEAM LEAVES:", team);
 
     if (Array.isArray(team)) {
-      allLeaves = [...allLeaves, ...team];
+      const merged = [...allLeaves, ...team];
+
+      const uniqueLeaves = merged.filter(
+        (leave, index, self) =>
+          index === self.findIndex(
+            (l) => l.id === leave.id
+          )
+      );
+
+      allLeaves = uniqueLeaves;
     }
   }
 
-  // 👉 sort latest first
   const sorted = allLeaves.sort(
     (a, b) =>
       new Date(b.from_date).getTime() -

@@ -10,13 +10,20 @@ const Login = () => {
   const navigate = useNavigate();
 
   // ✅ already logged in → redirect ONCE only
-  useEffect(() => {
-    const token = sessionStorage.getItem("token");
+useEffect(() => {
+  const token = sessionStorage.getItem("token");
+  const userStr = sessionStorage.getItem("user");
 
-    if (token && token !== "undefined") {
-      navigate("/admin-dashboard", { replace: true }); // 🔥 replace important
-    }
-  }, [navigate]); // ✅ dependency add
+  if (!token || !userStr) return;
+
+  const user = JSON.parse(userStr);
+
+  if (user.role === "HR") {
+    navigate("/admin-dashboard", { replace: true });
+  } else {
+    navigate("/dashboard", { replace: true });
+  }
+}, [navigate]); 
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -59,7 +66,11 @@ const Login = () => {
       // alert("Login Success ✅");
 
       // ✅ single navigation
-      navigate("/admin-dashboard", { replace: true });
+      if (data.user.role === "HR") {
+  navigate("/admin-dashboard", { replace: true });
+} else {
+  navigate("/dashboard", { replace: true });
+}
 
     } catch (err) {
       console.error(err);
