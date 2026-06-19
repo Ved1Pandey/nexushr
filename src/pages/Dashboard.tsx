@@ -49,6 +49,7 @@ const safeFetch = async (endpoint: string, options: any = {}) => {
   // ==============================
   // FETCH LEAVES
   // ==============================
+
 const fetchLeaves = async (token: string, user: any) => {
   let allLeaves: any[] = [];
 
@@ -92,7 +93,6 @@ const fetchLeaves = async (token: string, user: any) => {
 
   setLeaves(sorted);
 };
-
   // ==============================
   // FETCH BALANCE
   // ==============================
