@@ -348,35 +348,87 @@ if (todayRecord?.punch_in) {
 }
 
 return (
-    <div style={{
-  padding: 20,
-  maxWidth: 1100,
-  margin: "0 auto"
-}}>
-      <h2>Welcome {user?.name}</h2>
-      <h3> Today Status: {todayStatus}</h3>
+  
+<div
+  style={{
+    minHeight: "100vh",
+    background: "#f5f7fb",
+    padding: "40px",
+  }}
+>
+  <div
+    style={{
+      background: "linear-gradient(135deg,#2563eb,#1d4ed8)",
+      color: "white",
+      padding: "30px",
+      borderRadius: "20px",
+      marginBottom: "30px",
+      boxShadow: "0 10px 30px rgba(37,99,235,0.25)",
+    }}
+  >
+    <h1 style={{ margin: 0 }}>Welcome, {user?.name}</h1>
+
+    <p
+      style={{
+        marginTop: 10,
+        fontSize: 18,
+        opacity: 0.95,
+      }}
+    >
+      Today's Status: {todayStatus}
+    </p>
+  </div>
+
 {(isTL || isManager) && (
   <>
-  <h3 style={{ textAlign: "center" }}>Team Leaves</h3>
-    <div style={{
-  display: "flex",
-  gap: 20,
-  justifyContent: "center",
+  <div
+    style={{
+      background: "white",
+      borderRadius: "16px",
+      padding: "20px",
+      marginBottom: "20px",
+      boxShadow: "0 4px 15px rgba(0,0,0,0.08)"
+    }}
+  >
+    <h3 style={{ marginTop: 0 }}>Team Summary</h3>
+
+    <div
+      style={{
+        display: "flex",
+        gap: "20px",
+        justifyContent: "space-around",
+      }}
+    ></div>
   
-  marginBottom: 20
-}}>
-  
-  <div style={{ border: "1px solid #ccc", padding: 20, borderRadius: 10, width: 120, textAlign: "center" }}>
+  <div style={{ background: "white",
+padding: "24px",
+borderRadius: "16px",
+textAlign: "center",
+boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+border: "none"
+ }}>
     <h2>{pendingCount}</h2>
     <p>Pending</p>
   </div>
 
-  <div style={{ border: "1px solid #ccc", padding: 20, borderRadius: 10, width: 120, textAlign: "center" }}>
+  <div style={{ background: "white",
+padding: "24px",
+borderRadius: "16px",
+textAlign: "center",
+boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+border: "none"
+ }}>
     <h2>{approvedCount}</h2>
     <p>Approved</p>
   </div>
 
-  <div style={{ border: "1px solid #ccc", padding: 20, borderRadius: 10, width: 120, textAlign: "center" }}>
+  <div style={{ background: "white",
+padding: "24px",
+borderRadius: "16px",
+textAlign: "center",
+boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+border: "none"
+ }}>
     <h2>{rejectedCount}</h2>
     <p>Rejected</p>
   </div>
@@ -388,51 +440,28 @@ return (
 
 
 
-<div style={{
-  display: "flex",
-  gap: 20,
-  justifyContent: "center",
-  marginBottom: 20
-}}>
+<div
+  style={{
+    background: "white",
+    borderRadius: "12px",
+    padding: "16px 24px",
+    marginBottom: "20px",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+    textAlign: "center",
+  }}
+>
+  <h3 style={{ margin: 0 }}>My Leave Summary</h3>
 
-  {/* 🟡 Pending */}
-  <div style={{
-    border: "1px solid #facc15",
-    background: "#fef9c3",
-    padding: 15,
-    borderRadius: 10,
-    width: 120,
-    textAlign: "center"
-  }}>
-    <h2>{myPending}</h2>
-    <p style={{ fontSize: 14, color: "#555" }}>Pending</p>
-  </div>
-
-  {/* 🟢 Approved */}
-  <div style={{
-    border: "1px solid #4ade80",
-    background: "#dcfce7",
-    padding: 15,
-    borderRadius: 10,
-    width: 120,
-    textAlign: "center"
-  }}>
-    <h2>{myApproved}</h2>
-    <p style={{ fontSize: 14, color: "#555" }}>Approved</p>
-  </div>
-
-  {/* 🔴 Rejected */}
-  <div style={{
-    border: "1px solid #f87171",
-    background: "#fee2e2",
-    padding: 15,
-    borderRadius: 10,
-    width: 120,
-    textAlign: "center"
-  }}>
-    <h2>{myRejected}</h2>
-    <p style={{ fontSize: 14, color: "#555" }}>Rejected</p>
-  </div>
+  <p
+    style={{
+      marginTop: "10px",
+      fontSize: "16px",
+      fontWeight: 600,
+    }}
+  >
+    Pending: {myPending} | Approved: {myApproved} | Rejected: {myRejected}
+  </p>
+</div>
 
 </div> {/* 👈 My Leaves cards ka end */}
 <div style={{ textAlign: "center", marginBottom: 20 }}>
@@ -493,15 +522,80 @@ return (
 
 
       {/* BALANCE */}
-      <h3>Leave Balance</h3> 
-      {balance && (
-        <>
-          <p>CL: {balance.CL}</p>
-          <p>SL: {balance.SL}</p>
-          <p>PL: {balance.PL}</p>
-        </>
-      )}
-<h3>Apply Leave</h3>
+<div
+  style={{
+    background: "white",
+    borderRadius: "16px",
+    padding: "24px",
+    marginTop: "20px",
+    marginBottom: "20px",
+    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  }}
+>
+  <h3 style={{ marginTop: 0 }}>Leave Balance</h3>
+  
+
+  <div
+    style={{
+      display: "flex",
+      gap: "20px",
+      justifyContent: "center",
+      flexWrap: "wrap",
+    }}
+  >
+    <div
+      style={{
+        background: "#eff6ff",
+        padding: "20px",
+        borderRadius: "12px",
+        minWidth: "120px",
+        textAlign: "center",
+      }}
+    >
+      <h2>{balance?.CL ?? 0}</h2>
+      <p>CL</p>
+    </div>
+
+    <div
+      style={{
+        background: "#f0fdf4",
+        padding: "20px",
+        borderRadius: "12px",
+        minWidth: "120px",
+        textAlign: "center",
+      }}
+    >
+      <h2>{balance?.SL ?? 0}</h2>
+      <p>SL</p>
+    </div>
+
+    <div
+      style={{
+        background: "#fefce8",
+        padding: "20px",
+        borderRadius: "12px",
+        minWidth: "120px",
+        textAlign: "center",
+      }}
+    >
+      <h2>{balance?.PL ?? 0}</h2>
+      <p>PL</p>
+    </div>
+  </div>
+</div>
+<div
+  style={{
+    background: "white",
+    borderRadius: "16px",
+    padding: "24px",
+    marginTop: "20px",
+    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+    maxWidth: "500px",
+    marginLeft: "auto",
+    marginRight: "auto",
+  }}
+>
+  <h3 style={{ marginTop: 0 }}>Apply Leave</h3>
 
 <select
   value={type}
@@ -541,7 +635,7 @@ return (
 <button onClick={handleApplyLeave} disabled={submitting}>
   {submitting ? "Applying..." : "Apply"}
 </button>
-
+</div>
 
 
 {/* ================= MY LEAVES ================= */}
