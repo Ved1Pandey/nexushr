@@ -311,18 +311,7 @@ const teamLeaves = leaves.filter(
 const myPending = myOwnLeaves.filter(l => l.status === "PENDING").length;
 const myApproved = myOwnLeaves.filter(l => l.status === "APPROVED").length;
 const myRejected = myOwnLeaves.filter(l => l.status === "REJECTED").length;
-const pendingCount = teamLeaves.filter(
-  (l) => l.status?.toLowerCase() === "pending"
-).length;
 
-const approvedCount = teamLeaves.filter(
-  (l) => l.status?.toLowerCase() === "approved"
-).length;
-
-const rejectedCount = teamLeaves.filter(
-
-  (l) => l.status?.toLowerCase() === "rejected"
-).length;
 
 const today = new Date().toDateString();
 
@@ -356,6 +345,13 @@ return (
     padding: "40px",
   }}
 >
+  
+<div
+  style={{
+    maxWidth: "1200px",
+    margin: "0 auto",
+  }}
+></div>
   <div
     style={{
       background: "linear-gradient(135deg,#2563eb,#1d4ed8)",
@@ -379,91 +375,23 @@ return (
     </p>
   </div>
 
-{(isTL || isManager) && (
-  <>
-  <div
-    style={{
-      background: "white",
-      borderRadius: "16px",
-      padding: "20px",
-      marginBottom: "20px",
-      boxShadow: "0 4px 15px rgba(0,0,0,0.08)"
-    }}
-  >
-    <h3 style={{ marginTop: 0 }}>Team Summary</h3>
-
-    <div
-      style={{
-        display: "flex",
-        gap: "20px",
-        justifyContent: "space-around",
-      }}
-    ></div>
-  
-  <div style={{ background: "white",
-padding: "24px",
-borderRadius: "16px",
-textAlign: "center",
-boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
-border: "none"
- }}>
-    <h2>{pendingCount}</h2>
-    <p>Pending</p>
-  </div>
-
-  <div style={{ background: "white",
-padding: "24px",
-borderRadius: "16px",
-textAlign: "center",
-boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
-border: "none"
- }}>
-    <h2>{approvedCount}</h2>
-    <p>Approved</p>
-  </div>
-
-  <div style={{ background: "white",
-padding: "24px",
-borderRadius: "16px",
-textAlign: "center",
-boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
-border: "none"
- }}>
-    <h2>{rejectedCount}</h2>
-    <p>Rejected</p>
-  </div>
-
-</div>
-
-  </>
-)}
-
-
-
 <div
   style={{
     background: "white",
-    borderRadius: "12px",
-    padding: "16px 24px",
+    borderRadius: "16px",
+    padding: "20px",
     marginBottom: "20px",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
     textAlign: "center",
   }}
 >
-  <h3 style={{ margin: 0 }}>My Leave Summary</h3>
-
-  <p
-    style={{
-      marginTop: "10px",
-      fontSize: "16px",
-      fontWeight: 600,
-    }}
-  >
+  <h3>My Leave Summary</h3>
+  <p>
     Pending: {myPending} | Approved: {myApproved} | Rejected: {myRejected}
   </p>
 </div>
+{/* 👈 My Leaves cards ka end */}
 
-</div> {/* 👈 My Leaves cards ka end */}
 <div style={{ textAlign: "center", marginBottom: 20 }}>
   <button
     onClick={() => setShowAttendance(!showAttendance)}
@@ -721,24 +649,4 @@ border: "none"
   );
 };
 export default Dashboard;
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
-// test change
 // test change
