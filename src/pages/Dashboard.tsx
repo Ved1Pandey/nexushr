@@ -342,7 +342,7 @@ return (
   style={{
     minHeight: "100vh",
     background: "#f5f7fb",
-    padding: "40px",
+    padding: "20px",
   }}
 >
   
@@ -351,18 +351,18 @@ return (
     maxWidth: "1200px",
     margin: "0 auto",
   }}
-></div>
+>
   <div
     style={{
       background: "linear-gradient(135deg,#2563eb,#1d4ed8)",
       color: "white",
-      padding: "30px",
+      padding: "20px",
       borderRadius: "20px",
       marginBottom: "30px",
       boxShadow: "0 10px 30px rgba(37,99,235,0.25)",
     }}
   >
-    <h1 style={{ margin: 0 }}>Welcome, {user?.name}</h1>
+    <h1 style={{ margin: 0, fontSize: "32px" }}>Welcome, {user?.name}</h1>
 
     <p
       style={{
@@ -374,8 +374,160 @@ return (
       Today's Status: {todayStatus}
     </p>
   </div>
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
+    gap: 20,
+    marginBottom: 25,
+  }}
+>
+  <button
+    onClick={() => setShowAttendance(true)}
+    style={{
+      padding: 20,
+      borderRadius: 15,
+      border: "none",
+      background: "#2563eb",
+      color: "white",
+      cursor: "pointer",
+      fontSize: 16,
+      fontWeight: 600,
+    }}
+  >
+    📍 Attendance
+  </button>
+
+  <button
+    onClick={() =>
+      document
+        .getElementById("leave-form")
+        ?.scrollIntoView({ behavior: "smooth" })
+    }
+    style={{
+      padding: 20,
+      borderRadius: 15,
+      border: "none",
+      background: "#16a34a",
+      color: "white",
+      cursor: "pointer",
+      fontSize: 16,
+      fontWeight: 600,
+    }}
+  >
+    📝 Apply Leave
+  </button>
+
+  <button
+    onClick={() => setShowAttendance(false)}
+    style={{
+      padding: 20,
+      borderRadius: 15,
+      border: "none",
+      background: "#ea580c",
+      color: "white",
+      cursor: "pointer",
+      fontSize: 16,
+      fontWeight: 600,
+    }}
+  >
+    📅 Dashboard
+  </button>
+
+  <button
+    onClick={() => {
+      sessionStorage.clear();
+      navigate("/");
+    }}
+    style={{
+      padding: 20,
+      borderRadius: 15,
+      border: "none",
+      background: "#dc2626",
+      color: "white",
+      cursor: "pointer",
+      fontSize: 16,
+      fontWeight: 600,
+    }}
+  >
+    🚪 Logout
+  </button>
+</div>
 
 <div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "2fr 1fr",
+    gap: 20,
+    marginTop: 25,
+    marginBottom: 25,
+  }}
+>
+
+  {/* Calendar */}
+
+  <div
+    style={{
+      background: "white",
+      borderRadius: 15,
+      padding: 20,
+      boxShadow: "0 5px 15px rgba(0,0,0,.08)"
+    }}
+  >
+    <h3>📅 Calendar</h3>
+
+    <input
+      type="date"
+      style={{
+        padding:10,
+        fontSize:16,
+        width:"100%",
+        borderRadius:8
+      }}
+    />
+
+    <br/><br/>
+
+    <b>Upcoming Events</b>
+
+    <ul>
+      <li>15 Aug - Independence Day</li>
+      <li>02 Oct - Gandhi Jayanti</li>
+      <li>25 Dec - Christmas</li>
+    </ul>
+
+  </div>
+
+  {/* Notifications */}
+
+  <div
+    style={{
+      background:"white",
+      borderRadius:15,
+      padding:20,
+      boxShadow:"0 5px 15px rgba(0,0,0,.08)"
+    }}
+  >
+
+    <h3>🔔 Notifications</h3>
+
+    <ul>
+
+      <li>Attendance Updated</li>
+
+      <li>Leave Balance Refreshed</li>
+
+      <li>1 Pending Approval</li>
+
+      <li>Monthly Review Coming</li>
+
+    </ul>
+
+  </div>
+
+</div>
+<div
+id="leave-form"
   style={{
     background: "white",
     borderRadius: "16px",
@@ -385,10 +537,43 @@ return (
     textAlign: "center",
   }}
 >
-  <h3>My Leave Summary</h3>
-  <p>
-    Pending: {myPending} | Approved: {myApproved} | Rejected: {myRejected}
-  </p>
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    gap: "20px",
+  }}
+>
+  <div
+    style={{
+      background: "#fff7ed",
+      padding: "12px 20px",
+      borderRadius: "10px",
+    }}
+  >
+    Pending: {myPending}
+  </div>
+
+  <div
+    style={{
+      background: "#ecfdf5",
+      padding: "12px 20px",
+      borderRadius: "10px",
+    }}
+  >
+    Approved: {myApproved}
+  </div>
+
+  <div
+    style={{
+      background: "#fef2f2",
+      padding: "12px 20px",
+      borderRadius: "10px",
+    }}
+  >
+    Rejected: {myRejected}
+  </div>
+</div>
 </div>
 {/* 👈 My Leaves cards ka end */}
 
@@ -412,7 +597,76 @@ return (
       {/* 🔥 ATTENDANCE */}
       {showAttendance && (
   <>
+  <hr />
+
+<h2
+  style={{
+    textAlign: "center",
+    marginTop: 25,
+    marginBottom: 25,
+  }}
+>
+Attendance History
+</h2>
     <h3>Attendance</h3>
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-around",
+    marginBottom: 20,
+    gap: 20,
+    flexWrap: "wrap",
+  }}
+>
+
+  <div
+    style={{
+      background: "#eff6ff",
+      padding: 20,
+      borderRadius: 12,
+      minWidth: 180,
+      textAlign: "center",
+    }}
+  >
+    <h4>Today's Status</h4>
+    <h2>{todayStatus}</h2>
+  </div>
+
+  <div
+    style={{
+      background: "#ecfdf5",
+      padding: 20,
+      borderRadius: 12,
+      minWidth: 180,
+      textAlign: "center",
+    }}
+  >
+    <h4>Punch In</h4>
+    <h2>
+      {todayRecord?.punch_in
+        ? new Date(todayRecord.punch_in).toLocaleTimeString()
+        : "--"}
+    </h2>
+  </div>
+
+  <div
+    style={{
+      background: "#fef3c7",
+      padding: 20,
+      borderRadius: 12,
+      minWidth: 180,
+      textAlign: "center",
+    }}
+  >
+    <h4>Punch Out</h4>
+    <h2>
+      {todayRecord?.punch_out
+        ? new Date(todayRecord.punch_out).toLocaleTimeString()
+        : "--"}
+    </h2>
+  </div>
+
+</div>
 
     <button onClick={handlePunchIn} disabled={punchLoading}>
       Punch In
@@ -447,8 +701,148 @@ return (
     ))}
   </>
 )}
+<div
+  style={{
+    background: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    boxShadow: "0 4px 20px rgba(0,0,0,.08)"
+  }}
+>
+  <h3 style={{ marginTop: 0 }}>Recent Activity</h3>
 
+  <div style={{ padding: "10px 0", borderBottom: "1px solid #eee" }}>
+    🟢 Punch In completed
+  </div>
 
+  <div style={{ padding: "10px 0", borderBottom: "1px solid #eee" }}>
+    🟡 Leave request submitted
+  </div>
+
+  <div style={{ padding: "10px 0" }}>
+    🔵 Dashboard updated
+  </div>
+</div>
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "20px",
+    marginBottom: "20px",
+  }}
+>
+  {/* Calendar */}
+  <div
+    style={{
+      background: "#fff",
+      borderRadius: "16px",
+      padding: "20px",
+      boxShadow: "0 4px 20px rgba(0,0,0,.08)",
+    }}
+  >
+    <h3 style={{ marginTop: 0 }}>📅 Calendar</h3>
+
+    <div
+      style={{
+        height: "220px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        color: "#888",
+      }}
+    >
+      Calendar Coming Soon
+    </div>
+  </div>
+
+  {/* Upcoming Leaves */}
+  <div
+    style={{
+      background: "#fff",
+      borderRadius: "16px",
+      padding: "20px",
+      boxShadow: "0 4px 20px rgba(0,0,0,.08)",
+    }}
+  >
+    <h3 style={{ marginTop: 0 }}>Upcoming Leaves</h3>
+
+    <p>📌 No upcoming leaves</p>
+
+    <button
+      style={{
+        marginTop: 10,
+        background: "#2563eb",
+        color: "#fff",
+        border: "none",
+        padding: "8px 16px",
+        borderRadius: "8px",
+        cursor: "pointer",
+      }}
+    >
+      View Calendar
+    </button>
+  </div>
+</div>
+
+<div
+  style={{
+    background: "white",
+    borderRadius: "16px",
+    padding: "20px",
+    marginBottom: "20px",
+    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  }}
+>
+  <h3 style={{ marginTop: 0 }}>Quick Actions</h3>
+
+  <div
+    style={{
+      display: "flex",
+      gap: "15px",
+      flexWrap: "wrap",
+    }}
+  >
+    <button
+      style={{
+        padding: "12px 18px",
+        border: "none",
+        borderRadius: "10px",
+        background: "#2563eb",
+        color: "white",
+        cursor: "pointer",
+      }}
+    >
+      📅 Apply Leave
+    </button>
+
+    <button
+      style={{
+        padding: "12px 18px",
+        border: "none",
+        borderRadius: "10px",
+        background: "#16a34a",
+        color: "white",
+        cursor: "pointer",
+      }}
+    >
+      📄 Attendance Report
+    </button>
+
+    <button
+      style={{
+        padding: "12px 18px",
+        border: "none",
+        borderRadius: "10px",
+        background: "#f59e0b",
+        color: "white",
+        cursor: "pointer",
+      }}
+    >
+      🗓 Holiday Calendar
+    </button>
+  </div>
+</div>
       {/* BALANCE */}
 <div
   style={{
@@ -570,24 +964,38 @@ return (
 <h3>My Leaves</h3>
 
 {myOwnLeaves.map((l) => (
-  <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
-    <b>Me</b>
-    <br />
+  <div
+  key={l.id}
+  style={{
+    background: "#fff",
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 15,
+    boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
+    borderLeft:
+      l.status === "APPROVED"
+        ? "6px solid #22c55e"
+        : l.status === "REJECTED"
+        ? "6px solid #ef4444"
+        : "6px solid #f59e0b",
+  }}
+>
+  <h3 style={{ margin: 0 }}>📝 {l.type} Leave</h3>
 
-    Type: {l.type} | Status: {l.status}
-    <br />
+  <p><b>Status:</b> {l.status}</p>
 
-    {l.from_date === l.to_date ? (
-      <p>Date: {new Date(l.from_date).toLocaleDateString()}</p>
-    ) : (
-      <>
-        <p>From: {new Date(l.from_date).toLocaleDateString()}</p>
-        <p>To: {new Date(l.to_date).toLocaleDateString()}</p>
-      </>
-    )}
+  <p>
+    <b>From:</b>{" "}
+    {new Date(l.from_date).toLocaleDateString()}
+  </p>
 
-    <p>Reason: {l.reason}</p>
-  </div>
+  <p>
+    <b>To:</b>{" "}
+    {new Date(l.to_date).toLocaleDateString()}
+  </p>
+
+  <p><b>Reason:</b> {l.reason}</p>
+</div>
 ))}
 
 {/* ================= TEAM LEAVES ================= */}
@@ -596,45 +1004,56 @@ return (
     <h3>Team Leaves</h3>
 
     {teamLeaves.map((l) => (
-      <div key={l.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
-        
-        <b>{l.employees?.name}</b>
-        <br />
+      <div
+  key={l.id}
+  style={{
+    background: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 18,
+    boxShadow: "0 4px 12px rgba(0,0,0,.08)",
+    borderLeft:
+      l.status === "APPROVED"
+        ? "6px solid #16a34a"
+        : l.status === "REJECTED"
+        ? "6px solid #dc2626"
+        : "6px solid #f59e0b",
+  }}
+>
+  <h3 style={{ margin: 0 }}>{l.employees?.name}</h3>
 
-        Type: {l.type} | Status: {l.status}
-        <br />
+  <p><b>Type:</b> {l.type}</p>
 
-        {l.from_date === l.to_date ? (
-          <p>Date: {new Date(l.from_date).toLocaleDateString()}</p>
-        ) : (
-          <>
-            <p>From: {new Date(l.from_date).toLocaleDateString()}</p>
-            <p>To: {new Date(l.to_date).toLocaleDateString()}</p>
-          </>
-        )}
+  <p><b>Status:</b> {l.status}</p>
 
-        <p>Reason: {l.reason}</p>
+  <p><b>From:</b> {l.from_date}</p>
 
-        <br />
+  <p><b>To:</b> {l.to_date}</p>
 
-        {l.status?.toUpperCase() === "PENDING" &&
-          String(l.employee_id) !== String(user?.id) && (
-            <>
-              <button onClick={() => handleAction(l.id, "APPROVED")}>
-                Approve
-              </button>
+  <p><b>Reason:</b> {l.reason}</p>
 
-              <button onClick={() => handleAction(l.id, "REJECTED")}>
-                Reject
-              </button>
-            </>
-        )}
+  {l.status?.toUpperCase() === "PENDING" &&
+    String(l.employee_id) !== String(user?.id) && (
+      <>
+        <button
+          onClick={() => handleAction(l.id, "APPROVED")}
+        >
+          ✅ Approve
+        </button>
 
-      </div>
+        <button
+          onClick={() => handleAction(l.id, "REJECTED")}
+          style={{ marginLeft: 10 }}
+        >
+          ❌ Reject
+        </button>
+      </>
+  )}
+</div>
     ))}
-
   </>
 )}
+
 {/* LOGOUT */}
 <button
   onClick={() => {
@@ -645,8 +1064,10 @@ return (
   Logout
 </button>
 
-</div>
+</div>   
+</div>  
   );
-};
+};   // ← Component function close
+
 export default Dashboard;
-// test change
+// git test
