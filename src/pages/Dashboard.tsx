@@ -577,214 +577,6 @@ id="leave-form"
 </div>
 {/* 👈 My Leaves cards ka end */}
 
-<div style={{ textAlign: "center", marginBottom: 20 }}>
-  <button
-    onClick={() => setShowAttendance(!showAttendance)}
-    style={{
-      background: "#2563eb",
-      color: "white",
-      padding: "10px 20px",
-      borderRadius: 6,
-      border: "none",
-      cursor: "pointer",
-      marginTop: 10
-    }}
-  >
-    {showAttendance ? "Hide Attendance" : "View Attendance"}
-  </button>
-</div>
-
-      {/* 🔥 ATTENDANCE */}
-      {showAttendance && (
-  <>
-  <hr />
-
-<h2
-  style={{
-    textAlign: "center",
-    marginTop: 25,
-    marginBottom: 25,
-  }}
->
-Attendance History
-</h2>
-    <h3>Attendance</h3>
-<div
-  style={{
-    display: "flex",
-    justifyContent: "space-around",
-    marginBottom: 20,
-    gap: 20,
-    flexWrap: "wrap",
-  }}
->
-
-  <div
-    style={{
-      background: "#eff6ff",
-      padding: 20,
-      borderRadius: 12,
-      minWidth: 180,
-      textAlign: "center",
-    }}
-  >
-    <h4>Today's Status</h4>
-    <h2>{todayStatus}</h2>
-  </div>
-
-  <div
-    style={{
-      background: "#ecfdf5",
-      padding: 20,
-      borderRadius: 12,
-      minWidth: 180,
-      textAlign: "center",
-    }}
-  >
-    <h4>Punch In</h4>
-    <h2>
-      {todayRecord?.punch_in
-        ? new Date(todayRecord.punch_in).toLocaleTimeString()
-        : "--"}
-    </h2>
-  </div>
-
-  <div
-    style={{
-      background: "#fef3c7",
-      padding: 20,
-      borderRadius: 12,
-      minWidth: 180,
-      textAlign: "center",
-    }}
-  >
-    <h4>Punch Out</h4>
-    <h2>
-      {todayRecord?.punch_out
-        ? new Date(todayRecord.punch_out).toLocaleTimeString()
-        : "--"}
-    </h2>
-  </div>
-
-</div>
-
-    <button onClick={handlePunchIn} disabled={punchLoading}>
-      Punch In
-    </button>
-
-    <button onClick={handlePunchOut} disabled={punchLoading}>
-      Punch Out
-    </button>
-
-    <h3>My Attendance</h3>
-
-    {attendance.map((a: Attendance) => (
-      <div
-        key={a.id}
-        style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}
-      >
-        <p>Punch In: {new Date(a.punch_in).toLocaleString()}</p>
-        <p>
-          Punch Out:{" "}
-          {a.punch_out
-            ? new Date(a.punch_out).toLocaleString()
-            : "—"}
-        </p>
-
-        <a
-          href={`https://www.google.com/maps?q=${a.latitude},${a.longitude}`}
-          target="_blank"
-        >
-          View Location 📍
-        </a>
-      </div>
-    ))}
-  </>
-)}
-<div
-  style={{
-    background: "#fff",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
-    boxShadow: "0 4px 20px rgba(0,0,0,.08)"
-  }}
->
-  <h3 style={{ marginTop: 0 }}>Recent Activity</h3>
-
-  <div style={{ padding: "10px 0", borderBottom: "1px solid #eee" }}>
-    🟢 Punch In completed
-  </div>
-
-  <div style={{ padding: "10px 0", borderBottom: "1px solid #eee" }}>
-    🟡 Leave request submitted
-  </div>
-
-  <div style={{ padding: "10px 0" }}>
-    🔵 Dashboard updated
-  </div>
-</div>
-<div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "20px",
-    marginBottom: "20px",
-  }}
->
-  {/* Calendar */}
-  <div
-    style={{
-      background: "#fff",
-      borderRadius: "16px",
-      padding: "20px",
-      boxShadow: "0 4px 20px rgba(0,0,0,.08)",
-    }}
-  >
-    <h3 style={{ marginTop: 0 }}>📅 Calendar</h3>
-
-    <div
-      style={{
-        height: "220px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        color: "#888",
-      }}
-    >
-      Calendar Coming Soon
-    </div>
-  </div>
-
-  {/* Upcoming Leaves */}
-  <div
-    style={{
-      background: "#fff",
-      borderRadius: "16px",
-      padding: "20px",
-      boxShadow: "0 4px 20px rgba(0,0,0,.08)",
-    }}
-  >
-    <h3 style={{ marginTop: 0 }}>Upcoming Leaves</h3>
-
-    <p>📌 No upcoming leaves</p>
-
-    <button
-      style={{
-        marginTop: 10,
-        background: "#2563eb",
-        color: "#fff",
-        border: "none",
-        padding: "8px 16px",
-        borderRadius: "8px",
-        cursor: "pointer",
-      }}
-    >
-      View Calendar
-    </button>
-  </div>
-</div>
-
 <div
   style={{
     background: "white",
@@ -803,48 +595,28 @@ Attendance History
       flexWrap: "wrap",
     }}
   >
-    <button
-      style={{
-        padding: "12px 18px",
-        border: "none",
-        borderRadius: "10px",
-        background: "#2563eb",
-        color: "white",
-        cursor: "pointer",
-      }}
-    >
-      📅 Apply Leave
+    <button onClick={handlePunchIn}>
+      Punch In
+    </button>
+
+    <button onClick={handlePunchOut}>
+      Punch Out
     </button>
 
     <button
-      style={{
-        padding: "12px 18px",
-        border: "none",
-        borderRadius: "10px",
-        background: "#16a34a",
-        color: "white",
-        cursor: "pointer",
-      }}
+      onClick={() =>
+        document
+          .getElementById("applyLeave")
+          ?.scrollIntoView({ behavior: "smooth" })
+      }
     >
-      📄 Attendance Report
-    </button>
-
-    <button
-      style={{
-        padding: "12px 18px",
-        border: "none",
-        borderRadius: "10px",
-        background: "#f59e0b",
-        color: "white",
-        cursor: "pointer",
-      }}
-    >
-      🗓 Holiday Calendar
+      Apply Leave
     </button>
   </div>
 </div>
       {/* BALANCE */}
 <div
+  id="applyLeave"
   style={{
     background: "white",
     borderRadius: "16px",
@@ -911,52 +683,98 @@ Attendance History
     borderRadius: "16px",
     padding: "24px",
     marginTop: "20px",
+    marginBottom: "20px",
     boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-    maxWidth: "500px",
-    marginLeft: "auto",
-    marginRight: "auto",
   }}
 >
-  <h3 style={{ marginTop: 0 }}>Apply Leave</h3>
+  <h2 style={{ marginTop: 0 }}>📝 Apply Leave</h2>
 
-<select
-  value={type}
-  onChange={(e) => setType(e.target.value as LeaveType)}
->
-  <option value="CL">CL</option>
-  <option value="SL">SL</option>
-  <option value="PL">PL</option>
-</select>
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "15px",
+    }}
+  >
+    <div>
+      <label>Leave Type</label>
+      <br />
+      <select
+        value={type}
+        onChange={(e) => setType(e.target.value as LeaveType)}
+        style={{
+          width: "100%",
+          padding: 10,
+          marginTop: 5,
+        }}
+      >
+        <option value="CL">Casual Leave</option>
+        <option value="SL">Sick Leave</option>
+        <option value="PL">Privilege Leave</option>
+      </select>
+    </div>
 
-<br /><br />
+    <div>
+      <label>Reason</label>
+      <br />
+      <input
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+        placeholder="Enter reason"
+        style={{
+          width: "100%",
+          padding: 10,
+          marginTop: 5,
+        }}
+      />
+    </div>
 
-<input
-  type="date"
-  value={fromDate}
-  onChange={(e) => setFromDate(e.target.value)}
-/>
+    <div>
+      <label>From Date</label>
+      <br />
+      <input
+        type="date"
+        value={fromDate}
+        onChange={(e) => setFromDate(e.target.value)}
+        style={{
+          width: "100%",
+          padding: 10,
+          marginTop: 5,
+        }}
+      />
+    </div>
 
-<br /><br />
+    <div>
+      <label>To Date</label>
+      <br />
+      <input
+        type="date"
+        value={toDate}
+        onChange={(e) => setToDate(e.target.value)}
+        style={{
+          width: "100%",
+          padding: 10,
+          marginTop: 5,
+        }}
+      />
+    </div>
+  </div>
 
-<input
-  type="date"
-  value={toDate}
-  onChange={(e) => setToDate(e.target.value)}
-/>
-
-<br /><br />
-
-<input
-  value={reason}
-  onChange={(e) => setReason(e.target.value)}
-  placeholder="Reason"
-/>
-
-<br /><br />
-
-<button onClick={handleApplyLeave} disabled={submitting}>
-  {submitting ? "Applying..." : "Apply"}
-</button>
+  <button
+    onClick={handleApplyLeave}
+    disabled={submitting}
+    style={{
+      marginTop: 20,
+      background: "#2563eb",
+      color: "white",
+      border: "none",
+      padding: "12px 24px",
+      borderRadius: 8,
+      cursor: "pointer",
+    }}
+  >
+    {submitting ? "Applying..." : "Submit Leave Request"}
+  </button>
 </div>
 
 
