@@ -325,7 +325,18 @@ const todayRecord = attendance
       new Date(a.punch_in).getTime()
   )[0] as Attendance | undefined;
 
+const workingMinutes = todayRecord
+  ? Math.floor(
+      (
+        (todayRecord.punch_out
+          ? new Date(todayRecord.punch_out).getTime()
+          : Date.now()) -
+        new Date(todayRecord.punch_in).getTime()
+      ) / 60000
+    )
+  : 0;
 
+const workingHours = `${Math.floor(workingMinutes / 60)}h ${workingMinutes % 60}m`;
 let todayStatus = "Absent";
 
 if (todayRecord?.punch_in) {
@@ -354,13 +365,13 @@ return (
 >
   <div
     style={{
-      background: "linear-gradient(135deg,#2563eb,#1d4ed8)",
-      color: "white",
-      padding: "20px",
-      borderRadius: "20px",
-      marginBottom: "30px",
-      boxShadow: "0 10px 30px rgba(37,99,235,0.25)",
-    }}
+      background: "#ffffff",
+      color: "#111827",
+      border: "1px solid #e5e7eb",
+      padding: "18px",
+      borderRadius: "16px",
+boxShadow: "0 2px 8px rgba(0,0,0,.05)",
+marginBottom: "20px",    }}
   >
     <h1 style={{ margin: 0, fontSize: "32px" }}>Welcome, {user?.name}</h1>
 
@@ -374,44 +385,21 @@ return (
       Today's Status: {todayStatus}
     </p>
   </div>
-  <div
+ <div
   style={{
-    background: "white",
-    borderRadius: "16px",
-    padding: "20px",
-    marginTop: "20px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+    display: "flex",
+    gap: "20px",
+    flexWrap: "wrap",
+    margin: "15px 0 20px",
+    color: "#6b7280",
+    fontSize: "15px",
+    fontWeight: 500,
   }}
 >
-  <h3 style={{ marginTop: 0 }}>👤 Employee Profile</h3>
-
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
-      gap: "15px",
-    }}
-  >
-    <div>
-      <b>Employee ID</b>
-      <p>{user?.id || "EMP001"}</p>
-    </div>
-
-    <div>
-      <b>Department</b>
-      <p>{user?.department || "Coming Soon"}</p>
-    </div>
-
-    <div>
-      <b>Role</b>
-      <p>{user?.role}</p>
-    </div>
-
-    <div>
-      <b>Joining Date</b>
-      <p>{user?.joining_date || "Coming Soon"}</p>
-    </div>
-  </div>
+  <span><b>ID:</b> {user?.id}</span>
+  <span><b>Role:</b> {user?.role}</span>
+  <span><b>Dept:</b> {user?.department || "--"}</span>
+  <span><b>DOJ:</b> {user?.joining_date || "--"}</span>
 </div>
 <div
   style={{
@@ -427,7 +415,7 @@ return (
       padding: 20,
       borderRadius: 15,
       border: "none",
-      background: "#2563eb",
+      background: " #f59e0b",
       color: "white",
       cursor: "pointer",
       fontSize: 16,
@@ -447,7 +435,7 @@ return (
       padding: 20,
       borderRadius: 15,
       border: "none",
-      background: "#16a34a",
+      background: " #f59e0b",
       color: "white",
       cursor: "pointer",
       fontSize: 16,
@@ -463,7 +451,7 @@ return (
       padding: 20,
       borderRadius: 15,
       border: "none",
-      background: "#ea580c",
+      background: " #f59e0b",
       color: "white",
       cursor: "pointer",
       fontSize: 16,
@@ -482,7 +470,7 @@ return (
       padding: 20,
       borderRadius: 15,
       border: "none",
-      background: "#dc2626",
+      background: " #f59e0b",
       color: "white",
       cursor: "pointer",
       fontSize: 16,
@@ -493,78 +481,7 @@ return (
   </button>
 </div>
 
-<div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "2fr 1fr",
-    gap: 20,
-    marginTop: 25,
-    marginBottom: 25,
-  }}
->
 
-  {/* Calendar */}
-
-  <div
-    style={{
-      background: "white",
-      borderRadius: 15,
-      padding: 20,
-      boxShadow: "0 5px 15px rgba(0,0,0,.08)"
-    }}
-  >
-    <h3>📅 Calendar</h3>
-
-    <input
-      type="date"
-      style={{
-        padding:10,
-        fontSize:16,
-        width:"100%",
-        borderRadius:8
-      }}
-    />
-
-    <br/><br/>
-
-    <b>Upcoming Events</b>
-
-    <ul>
-      <li>15 Aug - Independence Day</li>
-      <li>02 Oct - Gandhi Jayanti</li>
-      <li>25 Dec - Christmas</li>
-    </ul>
-
-  </div>
-
-  {/* Notifications */}
-
-  <div
-    style={{
-      background:"white",
-      borderRadius:15,
-      padding:20,
-      boxShadow:"0 5px 15px rgba(0,0,0,.08)"
-    }}
-  >
-
-    <h3>🔔 Notifications</h3>
-
-    <ul>
-
-      <li>Attendance Updated</li>
-
-      <li>Leave Balance Refreshed</li>
-
-      <li>1 Pending Approval</li>
-
-      <li>Monthly Review Coming</li>
-
-    </ul>
-
-  </div>
-
-</div>
 <div
 id="leave-form"
   style={{
@@ -614,351 +531,113 @@ id="leave-form"
   </div>
 </div>
 </div>
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    gap: "20px",
+    marginTop: "20px",
+    flexWrap: "wrap",
+  }}
+>
+  <div
+    style={{
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      padding: "15px 25px",
+      borderRadius: "10px",
+      minWidth: "180px",
+      textAlign: "center",
+    }}
+  >
+    <h3>{workingHours}</h3>
+    <p>Working Hours</p>
+  </div>
+
+  <div
+    style={{
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      padding: "15px 25px",
+      borderRadius: "10px",
+      minWidth: "180px",
+      textAlign: "center",
+    }}
+  >
+    <h3>
+      {todayRecord
+        ? new Date(todayRecord.punch_in).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "--"}
+    </h3>
+    <p>Punch In</p>
+  </div>
+
+  <div
+    style={{
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      padding: "15px 25px",
+      borderRadius: "10px",
+      minWidth: "180px",
+      textAlign: "center",
+    }}
+  >
+    <h3>
+      {todayRecord?.punch_out
+        ? new Date(todayRecord.punch_out).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "--"}
+    </h3>
+    <p>Punch Out</p>
+  </div>
+</div>
 {/* 👈 My Leaves cards ka end */}
 <div
   style={{
-    textAlign: "center",
-    padding: "30px 0",
+    display: "flex",
+    gap: "12px",
+    marginTop: "16px",
+    marginBottom: "20px",
+    flexWrap: "wrap",
   }}
 >
-  <div style={{ fontSize: "48px" }}>💰</div>
-
-  <h3 style={{ margin: "10px 0" }}>
-    Payroll Module
-  </h3>
-
-  <p style={{ color: "#666" }}>
-    Coming Soon
-  </p>
-
   <button
+    onClick={handlePunchIn}
+    disabled={punchLoading}
     style={{
-      background: "#2563eb",
+      background: "#f59e0b",
       color: "white",
       border: "none",
-      padding: "10px 20px",
+      padding: "10px 18px",
       borderRadius: "8px",
       cursor: "pointer",
-      marginTop: "10px",
+      fontWeight: 600,
     }}
   >
-    View Payroll
+    Punch In
   </button>
-</div>
-<div
-  style={{
-    background: "white",
-    borderRadius: "16px",
-    padding: "24px",
-    marginTop: "20px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-    textAlign: "center",
-  }}
->
-  <h2>🎫 Support Tickets</h2>
-
-  <div style={{ fontSize: "48px", margin: "20px 0" }}>
-    🛠️
-  </div>
-
-  <h3>Coming Soon</h3>
-
-  <p style={{ color: "#666" }}>
-    Raise IT, HR and Admin support requests.
-  </p>
 
   <button
+    onClick={handlePunchOut}
+    disabled={punchLoading}
     style={{
-      background: "#2563eb",
+      background: "#f59e0b",
       color: "white",
       border: "none",
-      padding: "10px 20px",
+      padding: "10px 18px",
       borderRadius: "8px",
       cursor: "pointer",
-      marginTop: "15px",
+      fontWeight: 600,
     }}
   >
-    Create Ticket
+    Punch Out
   </button>
-</div>
-
-<div
-  style={{
-    background: "white",
-    borderRadius: "16px",
-    padding: "24px",
-    marginTop: "20px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-  }}
->
-  <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-    📊 Reports & Analytics
-  </h2>
-
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
-      gap: "16px",
-    }}
-  >
-    <div
-      style={{
-        background: "#eff6ff",
-        padding: "20px",
-        borderRadius: "12px",
-        textAlign: "center",
-      }}
-    >
-      <h3>Attendance</h3>
-      <p>Coming Soon</p>
-    </div>
-
-    <div
-      style={{
-        background: "#ecfdf5",
-        padding: "20px",
-        borderRadius: "12px",
-        textAlign: "center",
-      }}
-    >
-      <h3>Leave Report</h3>
-      <p>Coming Soon</p>
-    </div>
-
-    <div
-      style={{
-        background: "#fef3c7",
-        padding: "20px",
-        borderRadius: "12px",
-        textAlign: "center",
-      }}
-    >
-      <h3>Payroll</h3>
-      <p>Coming Soon</p>
-    </div>
-
-    <div
-      style={{
-        background: "#f3e8ff",
-        padding: "20px",
-        borderRadius: "12px",
-        textAlign: "center",
-      }}
-    >
-      <h3>Performance</h3>
-      <p>Coming Soon</p>
-    </div>
-  </div>
-</div>
-<div
-  style={{
-    background: "white",
-    borderRadius: "16px",
-    padding: "24px",
-    marginTop: "20px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-  }}
->
-  <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-    💻 Company Assets
-  </h2>
-
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
-      gap: "16px",
-    }}
-  >
-    <div
-      style={{
-        background: "#eef6ff",
-        padding: "20px",
-        borderRadius: "12px",
-        textAlign: "center",
-      }}
-    >
-      <h3>Laptop</h3>
-      <p>Dell Latitude</p>
-      <small>Assigned</small>
-    </div>
-
-    <div
-      style={{
-        background: "#ecfdf5",
-        padding: "20px",
-        borderRadius: "12px",
-        textAlign: "center",
-      }}
-    >
-      <h3>Mouse</h3>
-      <p>Logitech</p>
-      <small>Assigned</small>
-    </div>
-
-    <div
-      style={{
-        background: "#fef3c7",
-        padding: "20px",
-        borderRadius: "12px",
-        textAlign: "center",
-      }}
-    >
-      <h3>Access Card</h3>
-      <p>Active</p>
-      <small>Assigned</small>
-    </div>
-
-    <div
-      style={{
-        background: "#f3e8ff",
-        padding: "20px",
-        borderRadius: "12px",
-        textAlign: "center",
-      }}
-    >
-      <h3>More Assets</h3>
-      <p>Coming Soon</p>
-    </div>
-  </div>
-</div>
-<div
-  style={{
-    background: "white",
-    borderRadius: "16px",
-    padding: "20px",
-    marginBottom: "20px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-  }}
->
-  <h3 style={{ marginTop: 0 }}>Quick Actions</h3>
-
-  <div
-    style={{
-      display: "flex",
-      gap: "15px",
-      flexWrap: "wrap",
-    }}
-  ><button
-  onClick={handlePunchIn}
-  style={{
-    background: "#22c55e",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    padding: "10px 18px",
-    cursor: "pointer",
-    fontWeight: 600,
-    marginRight: "10px",
-  }}
->
-      Punch In
-    </button>
-
- <button
-  onClick={handlePunchOut}
-  style={{
-    background: "#ef4444",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    padding: "10px 18px",
-    cursor: "pointer",
-    fontWeight: 600,
-    marginRight: "10px",
-  }}
->
-
-  
-      Punch Out
-    </button>
-
-<button
-  onClick={() =>
-    document
-      .getElementById("applyLeave")
-      ?.scrollIntoView({ behavior: "smooth" })
-  }
-  style={{
-    background: "#2563eb",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    padding: "10px 18px",
-    cursor: "pointer",
-    fontWeight: 600,
-  }}
->      Apply Leave
-    </button>
-  </div>
-</div>
-<div
-  style={{
-    background: "white",
-    borderRadius: "16px",
-    padding: "20px",
-    marginBottom: "20px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-  }}
->
-  <h3 style={{ marginTop: 0 }}>🎯 Today's Summary</h3>
-
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
-      gap: "15px",
-    }}
-  >
-    <div
-      style={{
-        background: "#ecfdf5",
-        padding: "18px",
-        borderRadius: "10px",
-        textAlign: "center",
-      }}
-    >
-      <h2>8h 15m</h2>
-      <p>Working Hours</p>
-    </div>
-
-    <div
-      style={{
-        background: "#eff6ff",
-        padding: "18px",
-        borderRadius: "10px",
-        textAlign: "center",
-      }}
-    >
-      <h2>95%</h2>
-      <p>Attendance</p>
-    </div>
-
-    <div
-      style={{
-        background: "#fef3c7",
-        padding: "18px",
-        borderRadius: "10px",
-        textAlign: "center",
-      }}
-    >
-      <h2>2</h2>
-      <p>Pending Tasks</p>
-    </div>
-
-    <div
-      style={{
-        background: "#f3e8ff",
-        padding: "18px",
-        borderRadius: "10px",
-        textAlign: "center",
-      }}
-    >
-      <h2>0</h2>
-      <p>Open Tickets</p>
-    </div>
-  </div>
 </div>
       {/* BALANCE */}
 <div
@@ -985,7 +664,7 @@ id="leave-form"
   >
     <div
       style={{
-        background: "#eff6ff",
+        background: "#fff7ed",
         padding: "20px",
         borderRadius: "12px",
         minWidth: "120px",
@@ -998,7 +677,7 @@ id="leave-form"
 
     <div
       style={{
-        background: "#f0fdf4",
+        background: "#fff7ed",
         padding: "20px",
         borderRadius: "12px",
         minWidth: "120px",
@@ -1011,7 +690,7 @@ id="leave-form"
 
     <div
       style={{
-        background: "#fefce8",
+        background: "#fff7ed",
         padding: "20px",
         borderRadius: "12px",
         minWidth: "120px",
@@ -1111,7 +790,7 @@ id="leave-form"
     disabled={submitting}
     style={{
       marginTop: 20,
-      background: "#2563eb",
+      background: " #f59e0b",
       color: "white",
       border: "none",
       padding: "12px 24px",
@@ -1138,9 +817,9 @@ id="leave-form"
     boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
     borderLeft:
       l.status === "APPROVED"
-        ? "6px solid #22c55e"
+        ? "6px solid #f59e0b"
         : l.status === "REJECTED"
-        ? "6px solid #ef4444"
+        ? "6px solid #f59e0b"
         : "6px solid #f59e0b",
   }}
 >
@@ -1178,7 +857,7 @@ id="leave-form"
     boxShadow: "0 4px 12px rgba(0,0,0,.08)",
     borderLeft:
       l.status === "APPROVED"
-        ? "6px solid #16a34a"
+        ? "6px solid #f59e0b"
         : l.status === "REJECTED"
         ? "6px solid #dc2626"
         : "6px solid #f59e0b",
@@ -1234,4 +913,5 @@ id="leave-form"
 };   // ← Component function close
 
 export default Dashboard;
+// git test
 // git test
