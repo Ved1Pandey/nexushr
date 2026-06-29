@@ -445,22 +445,7 @@ marginBottom: "20px",    }}
     📝 Apply Leave
   </button>
 
-  <button
-    onClick={() => setShowAttendance(false)}
-    style={{
-      padding: 20,
-      borderRadius: 15,
-      border: "none",
-      background: " #f59e0b",
-      color: "white",
-      cursor: "pointer",
-      fontSize: 16,
-      fontWeight: 600,
-    }}
-  >
-    📅 Dashboard
-  </button>
-
+ 
   <button
     onClick={() => {
       sessionStorage.clear();
@@ -599,13 +584,14 @@ id="leave-form"
 </div>
 {/* 👈 My Leaves cards ka end */}
 <div
-  style={{
-    display: "flex",
-    gap: "12px",
-    marginTop: "16px",
-    marginBottom: "20px",
-    flexWrap: "wrap",
-  }}
+style={{
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: "12px",
+  marginTop: "16px",
+  marginBottom: "20px",
+}}
 >
   <button
     onClick={handlePunchIn}
@@ -651,56 +637,50 @@ id="leave-form"
     boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
   }}
 >
-  <h3 style={{ marginTop: 0 }}>Leave Balance</h3>
   
 
-  <div
+  
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    gap: "30px",
+    padding: "10px 0",
+  }}
+>
+  <span
     style={{
-      display: "flex",
-      gap: "20px",
-      justifyContent: "center",
-      flexWrap: "wrap",
+      background: "#fff7ed",
+      padding: "8px 16px",
+      borderRadius: "8px",
+      fontWeight: 600,
     }}
   >
-    <div
-      style={{
-        background: "#fff7ed",
-        padding: "20px",
-        borderRadius: "12px",
-        minWidth: "120px",
-        textAlign: "center",
-      }}
-    >
-      <h2>{balance?.CL ?? 0}</h2>
-      <p>CL</p>
-    </div>
+    CL : {balance?.CL ?? 0}
+  </span>
 
-    <div
-      style={{
-        background: "#fff7ed",
-        padding: "20px",
-        borderRadius: "12px",
-        minWidth: "120px",
-        textAlign: "center",
-      }}
-    >
-      <h2>{balance?.SL ?? 0}</h2>
-      <p>SL</p>
-    </div>
+  <span
+    style={{
+      background: "#fff7ed",
+      padding: "8px 16px",
+      borderRadius: "8px",
+      fontWeight: 600,
+    }}
+  >
+    SL : {balance?.SL ?? 0}
+  </span>
 
-    <div
-      style={{
-        background: "#fff7ed",
-        padding: "20px",
-        borderRadius: "12px",
-        minWidth: "120px",
-        textAlign: "center",
-      }}
-    >
-      <h2>{balance?.PL ?? 0}</h2>
-      <p>PL</p>
-    </div>
-  </div>
+  <span
+    style={{
+      background: "#fff7ed",
+      padding: "8px 16px",
+      borderRadius: "8px",
+      fontWeight: 600,
+    }}
+  >
+    PL : {balance?.PL ?? 0}
+  </span>
+</div>
 </div>
 <div
   style={{
@@ -913,5 +893,3 @@ id="leave-form"
 };   // ← Component function close
 
 export default Dashboard;
-// git test
-// git test
