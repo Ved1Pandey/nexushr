@@ -468,54 +468,27 @@ marginBottom: "20px",    }}
 
 
 <div
-id="leave-form"
-  style={{
-    background: "white",
-    borderRadius: "16px",
-    padding: "20px",
-    marginBottom: "20px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-    textAlign: "center",
-  }}
->
-<div
   style={{
     display: "flex",
     justifyContent: "center",
-    gap: "20px",
+    gap: "12px",
+    margin: "16px 0",
+    flexWrap: "wrap",
   }}
 >
-  <div
-    style={{
-      background: "#fff7ed",
-      padding: "12px 20px",
-      borderRadius: "10px",
-    }}
-  >
-    Pending: {myPending}
-  </div>
+  <span style={{ background:"#fff7ed", padding:"6px 12px", borderRadius:999 }}>
+    Pending {myPending}
+  </span>
 
-  <div
-    style={{
-      background: "#ecfdf5",
-      padding: "12px 20px",
-      borderRadius: "10px",
-    }}
-  >
-    Approved: {myApproved}
-  </div>
+  <span style={{ background:"#ecfdf5", padding:"6px 12px", borderRadius:999 }}>
+    Approved {myApproved}
+  </span>
 
-  <div
-    style={{
-      background: "#fef2f2",
-      padding: "12px 20px",
-      borderRadius: "10px",
-    }}
-  >
-    Rejected: {myRejected}
-  </div>
+  <span style={{ background:"#fef2f2", padding:"6px 12px", borderRadius:999 }}>
+    Rejected {myRejected}
+  </span>
 </div>
-</div>
+
 
 <div
   style={{
@@ -530,9 +503,9 @@ id="leave-form"
     style={{
       background: "#ffffff",
       border: "1px solid #e5e7eb",
-      padding: "15px 25px",
+      padding: "12px 18px",
       borderRadius: "10px",
-      minWidth: "180px",
+      minWidth: "140px",
       textAlign: "center",
     }}
   >
@@ -627,18 +600,15 @@ style={{
 </div>
       {/* BALANCE */}
 <div
-  id="applyLeave"
   style={{
     background: "white",
+    maxWidth: "700px",
+    margin: "20px auto",
     borderRadius: "16px",
     padding: "24px",
-    marginTop: "20px",
-    marginBottom: "20px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+    boxShadow: "0 4px 20px rgba(0,0,0,.08)",
   }}
 >
-  
-
   
 <div
   style={{
@@ -685,10 +655,10 @@ style={{
 <div
   style={{
     background: "white",
+    maxWidth: "720px",
+    margin: "20px auto",
     borderRadius: "16px",
     padding: "24px",
-    marginTop: "20px",
-    marginBottom: "20px",
     boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
   }}
 >
@@ -768,15 +738,17 @@ style={{
   <button
     onClick={handleApplyLeave}
     disabled={submitting}
-    style={{
-      marginTop: 20,
-      background: " #f59e0b",
-      color: "white",
-      border: "none",
-      padding: "12px 24px",
-      borderRadius: 8,
-      cursor: "pointer",
-    }}
+style={{
+  display: "block",
+  margin: "20px auto 0",
+  background: "#f59e0b",
+  color: "white",
+  border: "none",
+  padding: "12px 30px",
+  borderRadius: 10,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
   >
     {submitting ? "Applying..." : "Submit Leave Request"}
   </button>
@@ -893,3 +865,4 @@ style={{
 };   // ← Component function close
 
 export default Dashboard;
+//vedpandey
