@@ -37,6 +37,7 @@ const safeFetch = async (endpoint: string, options: any = {}) => {
 
   let data = {};
   try {
+
     data = await res.json();
   } catch {}
 
@@ -46,6 +47,23 @@ const safeFetch = async (endpoint: string, options: any = {}) => {
 
   return data;
 };
+const submitWorkRequest = async (type: "WFH" | "OUTDOOR") => {
+  try {
+    await safeFetch("/work-request", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ type }),
+    });
+
+    alert(type + " request submitted to manager.");
+  } catch (err: any) {
+    alert(err.message);
+  }
+};
+
   // ==============================
   // FETCH LEAVES
   // ==============================
@@ -183,7 +201,27 @@ const fetchBalance = async (token: string) => {
       setPunchLoading(false);
     }
   };
+const handleWorkRequest = async (type: "OUTDOOR" | "WFH") => {
+  const token = sessionStorage.getItem("token");
+  if (!token) return;
 
+  try {
+    await safeFetch("/applications", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        application_type: type,
+      }),
+    });
+
+    alert(`${type} request sent successfully`);
+  } catch (err: any) {
+    alert(err.message);
+  }
+};
   // ==============================
   // APPLY LEAVE
   // ==============================
@@ -562,6 +600,7 @@ style={{
   justifyContent: "center",
   alignItems: "center",
   gap: "12px",
+  flexWrap: "wrap",
   marginTop: "16px",
   marginBottom: "20px",
 }}
@@ -597,6 +636,36 @@ style={{
   >
     Punch Out
   </button>
+
+<button
+  onClick={() => handleWorkRequest("OUTDOOR")}
+  style={{
+    background: "#f59e0b",
+    color: "white",
+    border: "none",
+    padding: "10px 18px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: 600,
+  }}
+>
+  Outdoor
+</button>
+
+<button
+  onClick={() => handleWorkRequest("WFH")}
+  style={{
+    background: "#f59e0b",
+    color: "white",
+    border: "none",
+    padding: "10px 18px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: 600,
+  }}
+>
+  WFH
+</button>
 </div>
       {/* BALANCE */}
 <div
@@ -865,4 +934,5 @@ style={{
 };   // ← Component function close
 
 export default Dashboard;
+//vedpandey
 //vedpandey
