@@ -201,23 +201,24 @@ const fetchBalance = async (token: string) => {
       setPunchLoading(false);
     }
   };
+
 const handleWorkRequest = async (type: "OUTDOOR" | "WFH") => {
   const token = sessionStorage.getItem("token");
   if (!token) return;
 
   try {
-    await safeFetch("/applications", {
+    await safeFetch("/work-request", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        application_type: type,
+        type,
       }),
     });
 
-    alert(`${type} request sent successfully`);
+    alert(`${type} request sent to manager ✅`);
   } catch (err: any) {
     alert(err.message);
   }
@@ -934,5 +935,6 @@ style={{
 };   // ← Component function close
 
 export default Dashboard;
+//vedpandey
 //vedpandey
 //vedpandey
