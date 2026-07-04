@@ -15,7 +15,7 @@ const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [leaves, setLeaves] = useState<any[]>([]);
-  const [attendance, setAttendance] = useState<Attendance[]>([]); // ✅ NEW
+  const [attendance, setAttendance] = useState<Attendance[]>([]);
   const [balance, setBalance] = useState<any>(null);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -24,7 +24,7 @@ const Dashboard = () => {
   const [submitting, setSubmitting] = useState(false);
   const [punchLoading, setPunchLoading] = useState(false);
   const [showAttendance, setShowAttendance] = useState(false);
-  
+  const [workRequests, setWorkRequests] = useState<any[]>([]);
   const navigate = useNavigate();
 
   // ==============================
@@ -138,11 +138,24 @@ const fetchBalance = async (token: string) => {
 
     setAttendance(Array.isArray(data) ? data : []);
   };
+const fetchWorkRequests = async (token: string) => {
+  try {
+    const data: any = await safeFetch("/work-request", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
+    setWorkRequests(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.log(err);
+  }
+};
   // ==============================
   // PUNCH IN
   // ==============================
   
+
   const handlePunchIn = async () => {
     const token = sessionStorage.getItem("token");
     if (!token) return;
@@ -296,6 +309,25 @@ const token: string = sessionStorage.getItem("token")||"";
     alert("Error updating status");
   }
 };
+const handleWorkAction = async (
+  id: number,
+  status: "APPROVED" | "REJECTED"
+) => {
+  const token = sessionStorage.getItem("token");
+  if (!token) return;
+
+  await safeFetch(`/work-request/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  fetchWorkRequests(token);
+};
+
   // ==============================
   // INIT
   // ==============================
@@ -320,7 +352,7 @@ useEffect(() => {
   fetchLeaves(token, user);
   fetchBalance(token);
   fetchAttendance(token);
-
+  fetchWorkRequests(token);
   setLoading(false); 
 },
  [user]); 
@@ -918,7 +950,44 @@ style={{
     ))}
   </>
 )}
+{(isTL || isManager) && (
+  <>
+    <h3>Work Requests</h3>
 
+    {workRequests.map((r) => (
+      <div
+        key={r.id}
+        style={{
+          background: "#fff",
+          padding: 20,
+          borderRadius: 12,
+          marginBottom: 15,
+        }}
+      >
+        <p><b>Employee:</b> {r.employee_id}</p>
+        <p><b>Type:</b> {r.type}</p>
+        <p><b>Status:</b> {r.status}</p>
+
+        {r.status === "PENDING" && (
+          <>
+            <button
+              onClick={() => handleWorkAction(r.id, "APPROVED")}
+            >
+              ✅ Approve
+            </button>
+
+            <button
+              onClick={() => handleWorkAction(r.id, "REJECTED")}
+              style={{ marginLeft: 10 }}
+            >
+              ❌ Reject
+            </button>
+          </>
+        )}
+      </div>
+    ))}
+  </>
+)}
 {/* LOGOUT */}
 <button
   onClick={() => {
@@ -935,6 +1004,4 @@ style={{
 };   // ← Component function close
 
 export default Dashboard;
-//vedpandey
-//vedpandey
 //vedpandey
