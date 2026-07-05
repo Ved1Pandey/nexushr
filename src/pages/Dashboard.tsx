@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 
 type Attendance = {
   id: number;
@@ -26,7 +28,8 @@ const Dashboard = () => {
   const [showAttendance, setShowAttendance] = useState(false);
   const [workRequests, setWorkRequests] = useState<any[]>([]);
   const navigate = useNavigate();
-
+  const [showMyLeaves, setShowMyLeaves] = useState(false);
+  const [showWorkRequests, setShowWorkRequests] = useState(false);
   // ==============================
   // SAFE FETCH
   // ==============================
@@ -754,147 +757,221 @@ style={{
   </span>
 </div>
 </div>
+
 <div
   style={{
-    background: "white",
-    maxWidth: "720px",
-    margin: "20px auto",
-    borderRadius: "16px",
-    padding: "24px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 20,
+    alignItems: "start",
+    margin: "25px 0",
   }}
 >
-  <h2 style={{ marginTop: 0 }}>📝 Apply Leave</h2>
 
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gap: "15px",
-    }}
-  >
-    <div>
-      <label>Leave Type</label>
-      <br />
-      <select
-        value={type}
-        onChange={(e) => setType(e.target.value as LeaveType)}
-        style={{
-          width: "100%",
-          padding: 10,
-          marginTop: 5,
-        }}
-      >
-        <option value="CL">Casual Leave</option>
-        <option value="SL">Sick Leave</option>
-        <option value="PL">Privilege Leave</option>
-      </select>
-    </div>
+{/* APPLY LEAVE */}
 
-    <div>
-      <label>Reason</label>
-      <br />
-      <input
-        value={reason}
-        onChange={(e) => setReason(e.target.value)}
-        placeholder="Enter reason"
-        style={{
-          width: "100%",
-          padding: 10,
-          marginTop: 5,
-        }}
-      />
-    </div>
-
-    <div>
-      <label>From Date</label>
-      <br />
-      <input
-        type="date"
-        value={fromDate}
-        onChange={(e) => setFromDate(e.target.value)}
-        style={{
-          width: "100%",
-          padding: 10,
-          marginTop: 5,
-        }}
-      />
-    </div>
-
-    <div>
-      <label>To Date</label>
-      <br />
-      <input
-        type="date"
-        value={toDate}
-        onChange={(e) => setToDate(e.target.value)}
-        style={{
-          width: "100%",
-          padding: 10,
-          marginTop: 5,
-        }}
-      />
-    </div>
-  </div>
-
-  <button
-    onClick={handleApplyLeave}
-    disabled={submitting}
-style={{
-  display: "block",
-  margin: "20px auto 0",
-  background: "#f59e0b",
-  color: "white",
-  border: "none",
-  padding: "12px 30px",
-  borderRadius: 10,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
-  >
-    {submitting ? "Applying..." : "Submit Leave Request"}
-  </button>
-</div>
-
-
-{/* ================= MY LEAVES ================= */}
-<h3>My Leaves</h3>
-
-{myOwnLeaves.map((l) => (
-  <div
-  key={l.id}
+<div
   style={{
     background: "#fff",
-    borderRadius: 15,
+    borderRadius: 16,
     padding: 20,
-    marginBottom: 15,
-    boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
-    borderLeft:
-      l.status === "APPROVED"
-        ? "6px solid #f59e0b"
-        : l.status === "REJECTED"
-        ? "6px solid #f59e0b"
-        : "6px solid #f59e0b",
+    boxShadow: "0 4px 15px rgba(0,0,0,.08)"
   }}
 >
-  <h3 style={{ margin: 0 }}>📝 {l.type} Leave</h3>
 
-  <p><b>Status:</b> {l.status}</p>
+<h2 style={{marginTop:0}}>
+📝 Apply Leave
+</h2>
 
-  <p>
-    <b>From:</b>{" "}
-    {new Date(l.from_date).toLocaleDateString()}
-  </p>
+<select
+value={type}
+onChange={(e)=>setType(e.target.value as LeaveType)}
+style={{
+width:"100%",
+padding:12,
+marginBottom:12,
+borderRadius:8
+}}
+>
+<option value="CL">Casual Leave</option>
+<option value="SL">Sick Leave</option>
+<option value="PL">Privilege Leave</option>
+</select>
 
-  <p>
-    <b>To:</b>{" "}
-    {new Date(l.to_date).toLocaleDateString()}
-  </p>
+<input
+placeholder="Reason"
+value={reason}
+onChange={(e)=>setReason(e.target.value)}
+style={{
+width:"100%",
+padding:12,
+marginBottom:12,
+borderRadius:8
+}}
+/>
 
-  <p><b>Reason:</b> {l.reason}</p>
+<input
+type="date"
+value={fromDate}
+onChange={(e)=>setFromDate(e.target.value)}
+style={{
+width:"100%",
+padding:12,
+marginBottom:12,
+borderRadius:8
+}}
+/>
+
+<input
+type="date"
+value={toDate}
+onChange={(e)=>setToDate(e.target.value)}
+style={{
+width:"100%",
+padding:12,
+marginBottom:20,
+borderRadius:8
+}}
+/>
+
+<button
+onClick={handleApplyLeave}
+style={{
+width:"100%",
+background:"#f59e0b",
+color:"#fff",
+padding:"14px",
+border:"none",
+borderRadius:10,
+fontWeight:600,
+cursor:"pointer"
+}}
+>
+{submitting ? "Applying..." : "Submit Leave"}
+</button>
+
 </div>
-))}
 
+{/* CALENDAR */}
+
+<div
+style={{
+background:"#fff",
+borderRadius:16,
+padding:20,
+boxShadow:"0 4px 15px rgba(0,0,0,.08)"
+}}
+>
+
+<h2 style={{marginTop:0}}>
+📅 Leave Calendar
+</h2>
+
+<Calendar
+value={new Date()}
+/>
+
+</div>
+
+</div>
+{/* ================= MY LEAVES ================= */}
+<div
+  onClick={() => setShowMyLeaves(!showMyLeaves)}
+  style={{
+    background: "#fff",
+    padding: "16px 20px",
+    borderRadius: 12,
+    marginTop: 25,
+    marginBottom: 15,
+    cursor: "pointer",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    boxShadow: "0 2px 8px rgba(0,0,0,.08)"
+  }}
+>
+  <h3 style={{ margin: 0 }}>
+    📂 My Leaves ({myOwnLeaves.length})
+  </h3>
+
+  <span style={{ fontSize: 22 }}>
+    {showMyLeaves ? "▲" : "▼"}
+  </span>
+</div>
+
+
+{showMyLeaves && (
+  <>
+    {myOwnLeaves.map((l) => (
+      <div
+        key={l.id}
+        style={{
+          background: "#fff",
+          borderRadius: 15,
+          padding: 20,
+          marginBottom: 15,
+          boxShadow: "0 5px 15px rgba(0,0,0,.08)",
+          borderLeft: "6px solid #f59e0b",
+        }}
+      >
+        <h3 style={{ margin: 0 }}>📝 {l.type} Leave</h3>
+
+        <p><b>Status:</b> {l.status}</p>
+
+        <p><b>From:</b> {new Date(l.from_date).toLocaleDateString()}</p>
+
+        <p><b>To:</b> {new Date(l.to_date).toLocaleDateString()}</p>
+
+        <p><b>Reason:</b> {l.reason}</p>
+      </div>
+    ))}
+  </>
+)}
+<div
+  onClick={() => setShowWorkRequests(!showWorkRequests)}
+  style={{
+    background: "#fff",
+    padding: "16px 20px",
+    borderRadius: 12,
+    marginTop: 20,
+    marginBottom: 15,
+    cursor: "pointer",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    boxShadow: "0 2px 8px rgba(0,0,0,.08)"
+  }}
+>
+  <h3 style={{ margin: 0 }}>
+    💼 My Work Requests
+  </h3>
+
+  <span style={{ fontSize: 22 }}>
+    {showWorkRequests ? "▲" : "▼"}
+  </span>
+</div>
+
+{showWorkRequests && (
+  <>
+    {workRequests
+      .filter(r => String(r.employee_id) === String(user?.id))
+      .map((r) => (
+        <div
+          key={r.id}
+          style={{
+            background: "#fff",
+            borderRadius: 15,
+            padding: 20,
+            marginBottom: 15,
+            boxShadow: "0 5px 15px rgba(0,0,0,.08)"
+          }}
+        >
+          <p><b>Type:</b> {r.type}</p>
+          <p><b>Status:</b> {r.status}</p>
+        </div>
+      ))}
+  </>
+)}
 {/* ================= TEAM LEAVES ================= */}
 {(isTL || isManager) && (
   <>
@@ -964,7 +1041,7 @@ style={{
           marginBottom: 15,
         }}
       >
-        <p><b>Employee:</b> {r.employee_id}</p>
+        <p><b>Employee:</b> {r.employees?.name}</p>
         <p><b>Type:</b> {r.type}</p>
         <p><b>Status:</b> {r.status}</p>
 
@@ -1004,4 +1081,5 @@ style={{
 };   // ← Component function close
 
 export default Dashboard;
+//vedpandey
 //vedpandey
