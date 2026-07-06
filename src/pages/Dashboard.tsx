@@ -1065,6 +1065,22 @@ value={new Date()}
     ))}
   </>
 )}
+
+<button
+  onClick={() => navigate("/employee-directory")}
+  style={{
+    padding: 20,
+    borderRadius: 15,
+    border: "none",
+    background: "#2563eb",
+    color: "white",
+    cursor: "pointer",
+    fontSize: 16,
+    fontWeight: 600,
+  }}
+>
+  👥 Employee Directory
+</button>
 {/* LOGOUT */}
 <button
   onClick={() => {
