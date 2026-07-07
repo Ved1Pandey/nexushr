@@ -1080,15 +1080,21 @@ value={new Date()}
   }}
 >
   👥 Employee Directory
-</button>
-{/* LOGOUT */}
-<button
-  onClick={() => {
-    sessionStorage.clear();
-    navigate("/");
+  <button
+  onClick={() => navigate("/attendance-regularization")}
+  style={{
+    padding: 20,
+    borderRadius: 15,
+    border: "none",
+    background: "#f59e0b",
+    color: "white",
+    cursor: "pointer",
+    fontSize: 16,
+    fontWeight: 600,
   }}
 >
-  Logout
+  ⏰ Attendance Regularization
+</button>
 </button>
 
 </div>   
@@ -1097,5 +1103,6 @@ value={new Date()}
 };   // ← Component function close
 
 export default Dashboard;
+//vedpandey
 //vedpandey
 //vedpandey

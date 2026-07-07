@@ -9,6 +9,8 @@ import AdminDashboard from "./Admin/pages/AdminDashboard";
 import CreateJob from "./Admin/pages/CreateJob";
 import Applications from "./Admin/pages/Applications";
 import EmployeeDirectory from "./pages/EmployeeDirectory";
+import AttendanceRegularization from "./pages/AttendanceRegularization";
+
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
        <Route path="/create-job" element={<CreateJob />} />
        <Route path="/applications" element={<Applications />} />
        <Route path="/employee-directory" element={<ProtectedRoute><EmployeeDirectory /></ProtectedRoute>} />
+       <Route path="/attendance-regularization" element={<ProtectedRoute><AttendanceRegularization /></ProtectedRoute>} />
+
       </Routes>
     </BrowserRouter>
   );
