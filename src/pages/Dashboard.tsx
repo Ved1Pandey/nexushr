@@ -30,6 +30,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [showMyLeaves, setShowMyLeaves] = useState(false);
   const [showWorkRequests, setShowWorkRequests] = useState(false);
+  const [attendanceRequests, setAttendanceRequests] = useState<any[]>([]);
   // ==============================
   // SAFE FETCH
   // ==============================
@@ -150,6 +151,22 @@ const fetchWorkRequests = async (token: string) => {
     });
 
     setWorkRequests(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.log(err);
+  }
+};
+const fetchAttendanceRegularization = async (token: string) => {
+  try {
+    const data: any = await safeFetch(
+      "/team-attendance-regularization",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setAttendanceRequests(Array.isArray(data) ? data : []);
   } catch (err) {
     console.log(err);
   }
@@ -330,7 +347,24 @@ const handleWorkAction = async (
 
   fetchWorkRequests(token);
 };
+const handleAttendanceAction = async (
+  id: number,
+  status: "APPROVED" | "REJECTED"
+) => {
+  const token = sessionStorage.getItem("token");
+  if (!token) return;
 
+  await safeFetch(`/attendance-regularization/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  fetchAttendanceRegularization(token);
+};
   // ==============================
   // INIT
   // ==============================
@@ -356,6 +390,7 @@ useEffect(() => {
   fetchBalance(token);
   fetchAttendance(token);
   fetchWorkRequests(token);
+  fetchAttendanceRegularization(token);
   setLoading(false); 
 },
  [user]); 
@@ -1065,37 +1100,86 @@ value={new Date()}
     ))}
   </>
 )}
+{(isTL || isManager) && (
+  <>
+    <h3>Attendance Regularization Requests</h3>
 
-<button
-  onClick={() => navigate("/employee-directory")}
+    {attendanceRequests.map((r) => (
+      <div
+        key={r.id}
+        style={{
+          background: "#fff",
+          padding: 20,
+          borderRadius: 12,
+          marginBottom: 15,
+        }}
+      >
+        <p><b>Employee:</b> {r.employees?.name}</p>
+        <p><b>Date:</b> {r.attendance_date}</p>
+        <p><b>Reason:</b> {r.reason}</p>
+        <p><b>Status:</b> {r.status}</p>
+
+        {r.status === "PENDING" && (
+          <>
+            <button onClick={() => handleAttendanceAction(r.id, "APPROVED")}>
+              ✅ Approve
+            </button>
+
+            <button
+              onClick={() => handleAttendanceAction(r.id, "REJECTED")}
+              style={{ marginLeft: 10 }}
+            >
+              ❌ Reject
+            </button>
+          </>
+        )}
+      </div>
+    ))}
+  </>
+)}
+<div
   style={{
-    padding: 20,
-    borderRadius: 15,
-    border: "none",
-    background: "#2563eb",
-    color: "white",
-    cursor: "pointer",
-    fontSize: 16,
-    fontWeight: 600,
+    display: "flex",
+    gap: 15,
+    marginTop: 20,
+    flexWrap: "wrap",
   }}
 >
-  👥 Employee Directory
   <button
-  onClick={() => navigate("/attendance-regularization")}
-  style={{
-    padding: 20,
-    borderRadius: 15,
-    border: "none",
-    background: "#f59e0b",
-    color: "white",
-    cursor: "pointer",
-    fontSize: 16,
-    fontWeight: 600,
-  }}
->
-  ⏰ Attendance Regularization
-</button>
-</button>
+    onClick={() => navigate("/employee-directory")}
+    style={{
+      padding: 20,
+      borderRadius: 15,
+      border: "none",
+      background: "#f59e0b",
+      color: "white",
+      cursor: "pointer",
+      fontSize: 16,
+      fontWeight: 600,
+    }}
+  >
+    👥 Employee Directory
+  </button>
+
+  <button
+    onClick={() => navigate("/attendance-regularization")}
+    style={{
+      padding: 20,
+      borderRadius: 15,
+      border: "none",
+      background: "#f59e0b",
+      color: "white",
+      cursor: "pointer",
+      fontSize: 16,
+      fontWeight: 600,
+    }}
+  
+  >
+  
+    ⏰ Attendance Regularization
+  </button>
+</div>
+
 
 </div>   
 </div>  
