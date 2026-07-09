@@ -31,6 +31,11 @@ const Dashboard = () => {
   const [showMyLeaves, setShowMyLeaves] = useState(false);
   const [showWorkRequests, setShowWorkRequests] = useState(false);
   const [attendanceRequests, setAttendanceRequests] = useState<any[]>([]);
+  const [showTeamLeaves,setShowTeamLeaves]=useState(false);
+  const [showTeamWorkRequests, setShowTeamWorkRequests] = useState(false);
+  const [showAttendanceRequests, setShowAttendanceRequests] = useState(false);
+
+
   // ==============================
   // SAFE FETCH
   // ==============================
@@ -1002,6 +1007,12 @@ value={new Date()}
           }}
         >
           <p><b>Type:</b> {r.type}</p>
+          <p><b>Date:</b> {new Date(r.created_at).toLocaleDateString("en-IN")}</p>
+          <p><b>Time:</b> {new Date(r.created_at).toLocaleTimeString("en-IN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          })}</p>
+
           <p><b>Status:</b> {r.status}</p>
         </div>
       ))}
@@ -1009,10 +1020,30 @@ value={new Date()}
 )}
 {/* ================= TEAM LEAVES ================= */}
 {(isTL || isManager) && (
-  <>
-    <h3>Team Leaves</h3>
+<>
+<div
+onClick={() => setShowTeamLeaves(!showTeamLeaves)}
+style={{
+background:"#fff",
+padding:"16px 20px",
+borderRadius:12,
+marginTop:20,
+marginBottom:15,
+cursor:"pointer",
+display:"flex",
+justifyContent:"space-between",
+alignItems:"center",
+boxShadow:"0 2px 8px rgba(0,0,0,.08)"
+}}
+>
+<h3 style={{margin:0}}>
+👥 Team Leaves ({teamLeaves.length})
+</h3>
 
-    {teamLeaves.map((l) => (
+<span>{showTeamLeaves ? "▲" : "▼"}</span>
+</div>
+
+{showTeamLeaves && teamLeaves.map((l)=>(
       <div
   key={l.id}
   style={{
@@ -1064,79 +1095,160 @@ value={new Date()}
 )}
 {(isTL || isManager) && (
   <>
-    <h3>Work Requests</h3>
+    <div
+      onClick={() => setShowTeamWorkRequests(!showTeamWorkRequests)}
+      style={{
+        background: "#fff",
+        padding: "16px 20px",
+        borderRadius: 12,
+        marginTop: 20,
+        marginBottom: 15,
+        cursor: "pointer",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        boxShadow: "0 2px 8px rgba(0,0,0,.08)",
+      }}
+    >
+      <h3 style={{ margin: 0 }}>
+        💼 Team Work Requests
+      </h3>
 
-    {workRequests.map((r) => (
-      <div
-        key={r.id}
-        style={{
-          background: "#fff",
-          padding: 20,
-          borderRadius: 12,
-          marginBottom: 15,
-        }}
-      >
-        <p><b>Employee:</b> {r.employees?.name}</p>
-        <p><b>Type:</b> {r.type}</p>
-        <p><b>Status:</b> {r.status}</p>
+      <span>{showTeamWorkRequests ? "▲" : "▼"}</span>
+    </div>
 
-        {r.status === "PENDING" && (
-          <>
-            <button
-              onClick={() => handleWorkAction(r.id, "APPROVED")}
-            >
-              ✅ Approve
-            </button>
+    {showTeamWorkRequests &&
+      workRequests
+        .filter((r) => String(r.employee_id) !== String(user?.id))
+        .map((r) => (
+          <div
+            key={r.id}
+            style={{
+              background: "#fff",
+              padding: 20,
+              borderRadius: 12,
+              marginBottom: 15,
+              boxShadow: "0 4px 12px rgba(0,0,0,.08)",
+            }}
+          >
+            <p><b>Employee:</b> {r.employees?.name}</p>
 
-            <button
-              onClick={() => handleWorkAction(r.id, "REJECTED")}
-              style={{ marginLeft: 10 }}
-            >
-              ❌ Reject
-            </button>
-          </>
-        )}
-      </div>
-    ))}
+<p><b>Type:</b> {r.type}</p>
+
+<p>
+  <b>Date:</b>{" "}
+  {r.created_at
+    ? new Date(r.created_at).toLocaleDateString("en-IN")
+    : "--"}
+</p>
+
+<p>
+  <b>Time:</b>{" "}
+  {r.created_at
+    ? new Date(r.created_at).toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "--"}
+</p>
+
+<p><b>Status:</b> {r.status}</p>
+
+
+            {r.status === "PENDING" && (
+              <>
+                <button
+                  onClick={() =>
+                    handleWorkAction(r.id, "APPROVED")
+                  }
+                >
+                  ✅ Approve
+                </button>
+
+                <button
+                  onClick={() =>
+                    handleWorkAction(r.id, "REJECTED")
+                  }
+                  style={{ marginLeft: 10 }}
+                >
+                  ❌ Reject
+                </button>
+              </>
+            )}
+          </div>
+        ))}
   </>
 )}
 {(isTL || isManager) && (
   <>
-    <h3>Attendance Regularization Requests</h3>
+    <div
+      onClick={() =>
+        setShowAttendanceRequests(!showAttendanceRequests)
+      }
+      style={{
+        background: "#fff",
+        padding: "16px 20px",
+        borderRadius: 12,
+        marginTop: 20,
+        marginBottom: 15,
+        cursor: "pointer",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        boxShadow: "0 2px 8px rgba(0,0,0,.08)",
+      }}
+    >
+      <h3 style={{ margin: 0 }}>
+        🕒 Attendance Regularization Requests
+      </h3>
 
-    {attendanceRequests.map((r) => (
-      <div
-        key={r.id}
-        style={{
-          background: "#fff",
-          padding: 20,
-          borderRadius: 12,
-          marginBottom: 15,
-        }}
-      >
-        <p><b>Employee:</b> {r.employees?.name}</p>
-        <p><b>Date:</b> {r.attendance_date}</p>
-        <p><b>Reason:</b> {r.reason}</p>
-        <p><b>Status:</b> {r.status}</p>
+      <span>
+        {showAttendanceRequests ? "▲" : "▼"}
+      </span>
+    </div>
 
-        {r.status === "PENDING" && (
-          <>
-            <button onClick={() => handleAttendanceAction(r.id, "APPROVED")}>
-              ✅ Approve
-            </button>
+    {showAttendanceRequests &&
+      attendanceRequests.map((r) => (
+        <div
+          key={r.id}
+          style={{
+            background: "#fff",
+            padding: 20,
+            borderRadius: 12,
+            marginBottom: 15,
+            boxShadow: "0 4px 12px rgba(0,0,0,.08)",
+          }}
+        >
+          <p><b>Employee:</b> {r.employees?.name}</p>
+          <p><b>Date:</b> {r.date}</p>
+          <p><b>Reason:</b> {r.reason}</p>
+          <p><b>Status:</b> {r.status}</p>
 
-            <button
-              onClick={() => handleAttendanceAction(r.id, "REJECTED")}
-              style={{ marginLeft: 10 }}
-            >
-              ❌ Reject
-            </button>
-          </>
-        )}
-      </div>
-    ))}
+          {r.status === "PENDING" && (
+            <>
+              <button
+                onClick={() =>
+                  handleAttendanceAction(r.id, "APPROVED")
+                }
+              >
+                ✅ Approve
+              </button>
+
+              <button
+                onClick={() =>
+                  handleAttendanceAction(r.id, "REJECTED")
+                }
+                style={{ marginLeft: 10 }}
+              >
+                ❌ Reject
+              </button>
+            </>
+          )}
+        </div>
+      ))}
   </>
 )}
+
 <div
   style={{
     display: "flex",
@@ -1187,6 +1299,4 @@ value={new Date()}
 };   // ← Component function close
 
 export default Dashboard;
-//vedpandey
-//vedpandey
 //vedpandey
