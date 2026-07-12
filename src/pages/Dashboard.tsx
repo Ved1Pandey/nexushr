@@ -13,6 +13,11 @@ type Attendance = {
 
 type LeaveType = "CL" | "SL" | "PL";
 
+const parseAttendanceDate = (value: string) => {
+  const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(value);
+  return new Date(hasTimezone ? value : `${value}Z`);
+};
+
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -141,12 +146,14 @@ const fetchBalance = async (token: string) => {
   // FETCH ATTENDANCE ✅ NEW
   // ==============================
   const fetchAttendance = async (token: string) => {
-      const data: any = await safeFetch("/attendance", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  const data: any = await safeFetch("/attendance", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
-    setAttendance(Array.isArray(data) ? data : []);
-  };
+  console.log("ATTENDANCE API RESPONSE:", data);
+
+  setAttendance(Array.isArray(data) ? data : []);
+};
 const fetchWorkRequests = async (token: string) => {
   try {
     const data: any = await safeFetch("/work-request", {
@@ -427,25 +434,25 @@ const myApproved = myOwnLeaves.filter(l => l.status === "APPROVED").length;
 const myRejected = myOwnLeaves.filter(l => l.status === "REJECTED").length;
 
 
-const today = new Date().toDateString();
+const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 
 const todayRecord = attendance
   .filter((a: Attendance) => 
-    new Date(a.punch_in).toDateString() === today
+    parseAttendanceDate(a.punch_in).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }) === today
   )
   .sort(
     (a: Attendance, b: Attendance) =>
-      new Date(b.punch_in).getTime() -
-      new Date(a.punch_in).getTime()
+      parseAttendanceDate(b.punch_in).getTime() -
+      parseAttendanceDate(a.punch_in).getTime()
   )[0] as Attendance | undefined;
 
 const workingMinutes = todayRecord
   ? Math.floor(
       (
         (todayRecord.punch_out
-          ? new Date(todayRecord.punch_out).getTime()
+          ? parseAttendanceDate(todayRecord.punch_out).getTime()
           : Date.now()) -
-        new Date(todayRecord.punch_in).getTime()
+        parseAttendanceDate(todayRecord.punch_in).getTime()
       ) / 60000
     )
   : 0;
@@ -524,7 +531,14 @@ marginBottom: "20px",    }}
   }}
 >
   <button
-    onClick={() => setShowAttendance(true)}
+    onClick={() => {
+      setShowAttendance(true);
+      setTimeout(() => {
+        document
+          .getElementById("attendance-history")
+          ?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }}
     style={{
       padding: 20,
       borderRadius: 15,
@@ -639,7 +653,8 @@ marginBottom: "20px",    }}
   >
     <h3>
       {todayRecord
-        ? new Date(todayRecord.punch_in).toLocaleTimeString([], {
+        ? parseAttendanceDate(todayRecord.punch_in).toLocaleTimeString("en-IN", {
+            timeZone: "Asia/Kolkata",
             hour: "2-digit",
             minute: "2-digit",
           })
@@ -660,7 +675,8 @@ marginBottom: "20px",    }}
   >
     <h3>
       {todayRecord?.punch_out
-        ? new Date(todayRecord.punch_out).toLocaleTimeString([], {
+        ? parseAttendanceDate(todayRecord.punch_out).toLocaleTimeString("en-IN", {
+            timeZone: "Asia/Kolkata",
             hour: "2-digit",
             minute: "2-digit",
           })
@@ -669,6 +685,80 @@ marginBottom: "20px",    }}
     <p>Punch Out</p>
   </div>
 </div>
+{showAttendance && (
+  <div
+    id="attendance-history"
+    style={{
+      background: "#fff",
+      borderRadius: 16,
+      padding: 20,
+      marginTop: 20,
+      marginBottom: 20,
+      boxShadow: "0 4px 15px rgba(0,0,0,.08)",
+    }}
+  >
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <h2>📍 Attendance History</h2>
+      <button
+        onClick={() => setShowAttendance(false)}
+        style={{
+          border: "none",
+          background: "#f59e0b",
+          color: "#fff",
+          padding: "8px 14px",
+          borderRadius: 8,
+          cursor: "pointer",
+        }}
+      >
+        Close
+      </button>
+    </div>
+
+    {attendance.length === 0 ? (
+      <p>No attendance history found.</p>
+    ) : (
+      attendance.map((a) => (
+        <div
+          key={a.id}
+          style={{
+            borderBottom: "1px solid #e5e7eb",
+            padding: "12px 0",
+          }}
+        >
+          <p>
+            <b>Date:</b>{" "}
+            {parseAttendanceDate(a.punch_in).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}
+          </p>
+          <p>
+            <b>Punch In:</b>{" "}
+            {parseAttendanceDate(a.punch_in).toLocaleTimeString("en-IN", {
+              timeZone: "Asia/Kolkata",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
+          <p>
+            <b>Punch Out:</b>{" "}
+            {a.punch_out
+              ? parseAttendanceDate(a.punch_out).toLocaleTimeString("en-IN", {
+                  timeZone: "Asia/Kolkata",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "--"}
+          </p>
+        </div>
+      ))
+    )}
+  </div>
+)}
+
 {/* 👈 My Leaves cards ka end */}
 <div
 style={{
@@ -811,6 +901,7 @@ style={{
 {/* APPLY LEAVE */}
 
 <div
+  id="leave-form"
   style={{
     background: "#fff",
     borderRadius: 16,
@@ -1009,6 +1100,7 @@ value={new Date()}
           <p><b>Type:</b> {r.type}</p>
           <p><b>Date:</b> {new Date(r.created_at).toLocaleDateString("en-IN")}</p>
           <p><b>Time:</b> {new Date(r.created_at).toLocaleTimeString("en-IN", {
+          timeZone: "Asia/Kolkata",
           hour: "2-digit",
           minute: "2-digit",
           })}</p>
@@ -1146,6 +1238,7 @@ boxShadow:"0 2px 8px rgba(0,0,0,.08)"
   <b>Time:</b>{" "}
   {r.created_at
     ? new Date(r.created_at).toLocaleTimeString("en-IN", {
+        timeZone: "Asia/Kolkata",
         hour: "2-digit",
         minute: "2-digit",
       })
@@ -1220,7 +1313,9 @@ boxShadow:"0 2px 8px rgba(0,0,0,.08)"
           }}
         >
           <p><b>Employee:</b> {r.employees?.name}</p>
-          <p><b>Date:</b> {r.date}</p>
+          <p><b>Date:</b> {r.attendance_date}</p>
+          <p><b>Punch In:</b> {r.new_punch_in}</p>
+          <p><b>Punch Out:</b> {r.new_punch_out}</p>
           <p><b>Reason:</b> {r.reason}</p>
           <p><b>Status:</b> {r.status}</p>
 
