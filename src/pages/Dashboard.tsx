@@ -695,6 +695,7 @@ marginBottom: "20px",    }}
       marginTop: 20,
       marginBottom: 20,
       boxShadow: "0 4px 15px rgba(0,0,0,.08)",
+      overflowX: "auto",
     }}
   >
     <div
@@ -702,9 +703,11 @@ marginBottom: "20px",    }}
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        marginBottom: 20,
       }}
     >
-      <h2>📍 Attendance History</h2>
+      <h2 style={{ margin: 0 }}>📍 Attendance History</h2>
+
       <button
         onClick={() => setShowAttendance(false)}
         style={{
@@ -723,38 +726,91 @@ marginBottom: "20px",    }}
     {attendance.length === 0 ? (
       <p>No attendance history found.</p>
     ) : (
-      attendance.map((a) => (
-        <div
-          key={a.id}
-          style={{
-            borderBottom: "1px solid #e5e7eb",
-            padding: "12px 0",
-          }}
-        >
-          <p>
-            <b>Date:</b>{" "}
-            {parseAttendanceDate(a.punch_in).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}
-          </p>
-          <p>
-            <b>Punch In:</b>{" "}
-            {parseAttendanceDate(a.punch_in).toLocaleTimeString("en-IN", {
-              timeZone: "Asia/Kolkata",
-              hour: "2-digit",
-              minute: "2-digit",
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          minWidth: 650,
+        }}
+      >
+        <thead>
+          <tr style={{ background: "#fff7ed" }}>
+            <th style={{ padding: 12, textAlign: "left" }}>Date</th>
+            <th style={{ padding: 12, textAlign: "left" }}>Punch In</th>
+            <th style={{ padding: 12, textAlign: "left" }}>Punch Out</th>
+            <th style={{ padding: 12, textAlign: "left" }}>
+              Working Hours
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {[...attendance]
+            .sort(
+              (a, b) =>
+                parseAttendanceDate(b.punch_in).getTime() -
+                parseAttendanceDate(a.punch_in).getTime()
+            )
+            .map((a) => {
+              const punchIn = parseAttendanceDate(a.punch_in);
+
+              const punchOut = a.punch_out
+                ? parseAttendanceDate(a.punch_out)
+                : null;
+
+              const minutes = punchOut
+                ? Math.max(
+                    0,
+                    Math.floor(
+                      (punchOut.getTime() - punchIn.getTime()) / 60000
+                    )
+                  )
+                : null;
+
+              const recordWorkingHours =
+                minutes !== null
+                  ? `${Math.floor(minutes / 60)}h ${minutes % 60}m`
+                  : "In Progress";
+
+              return (
+                <tr
+                  key={a.id}
+                  style={{
+                    borderBottom: "1px solid #e5e7eb",
+                  }}
+                >
+                  <td style={{ padding: 12 }}>
+                    {punchIn.toLocaleDateString("en-IN", {
+                      timeZone: "Asia/Kolkata",
+                    })}
+                  </td>
+
+                  <td style={{ padding: 12 }}>
+                    {punchIn.toLocaleTimeString("en-IN", {
+                      timeZone: "Asia/Kolkata",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </td>
+
+                  <td style={{ padding: 12 }}>
+                    {punchOut
+                      ? punchOut.toLocaleTimeString("en-IN", {
+                          timeZone: "Asia/Kolkata",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "--"}
+                  </td>
+
+                  <td style={{ padding: 12, fontWeight: 600 }}>
+                    {recordWorkingHours}
+                  </td>
+                </tr>
+              );
             })}
-          </p>
-          <p>
-            <b>Punch Out:</b>{" "}
-            {a.punch_out
-              ? parseAttendanceDate(a.punch_out).toLocaleTimeString("en-IN", {
-                  timeZone: "Asia/Kolkata",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              : "--"}
-          </p>
-        </div>
-      ))
+        </tbody>
+      </table>
     )}
   </div>
 )}
