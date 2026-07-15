@@ -10,7 +10,7 @@ import CreateJob from "./Admin/pages/CreateJob";
 import Applications from "./Admin/pages/Applications";
 import EmployeeDirectory from "./pages/EmployeeDirectory";
 import AttendanceRegularization from "./pages/AttendanceRegularization";
-
+import Payroll from "./Admin/pages/Payroll";
 
 function App() {
   return (
@@ -28,17 +28,16 @@ function App() {
             </ProtectedRoute>
           }
         />
-       <Route path="/career" element={<Career />} />
        <Route path="/signup" element={<Signup />} />
        <Route path="/candidate-dashboard"element={<CandidateDashboard />}/>
        <Route path="/admin-dashboard" element={<AdminDashboard />} />
        <Route path="/create-job" element={<CreateJob />}/>
-       <Route path="/create-job" element={<CreateJob />} />
        <Route path="/applications" element={<Applications />} />
        <Route path="/employee-directory" element={<ProtectedRoute><EmployeeDirectory /></ProtectedRoute>} />
        <Route path="/attendance-regularization" element={<ProtectedRoute><AttendanceRegularization /></ProtectedRoute>} />
-
-      </Routes>
+       <Route path="/payroll" element={<ProtectedRoute><Payroll /></ProtectedRoute>} />
+       
+       </Routes>
     </BrowserRouter>
   );
 }

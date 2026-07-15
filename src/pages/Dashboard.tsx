@@ -30,15 +30,15 @@ const Dashboard = () => {
   const [type, setType] = useState<LeaveType>("CL");
   const [submitting, setSubmitting] = useState(false);
   const [punchLoading, setPunchLoading] = useState(false);
-  const [showAttendance, setShowAttendance] = useState(false);
   const [workRequests, setWorkRequests] = useState<any[]>([]);
   const navigate = useNavigate();
-  const [showMyLeaves, setShowMyLeaves] = useState(false);
-  const [showWorkRequests, setShowWorkRequests] = useState(false);
+  const [showMyRequests, setShowMyRequests] = useState(false)
   const [attendanceRequests, setAttendanceRequests] = useState<any[]>([]);
   const [showTeamLeaves,setShowTeamLeaves]=useState(false);
   const [showTeamWorkRequests, setShowTeamWorkRequests] = useState(false);
   const [showAttendanceRequests, setShowAttendanceRequests] = useState(false);
+  const [showRequestMenu, setShowRequestMenu] = useState(false);
+  const [showLeaveForm, setShowLeaveForm] = useState(false);
 
 
   // ==============================
@@ -429,9 +429,40 @@ const myOwnLeaves = leaves.filter(
 const teamLeaves = leaves.filter(
   (l) => String(l.employee_id) !== String(user?.id)
 );
-const myPending = myOwnLeaves.filter(l => l.status === "PENDING").length;
-const myApproved = myOwnLeaves.filter(l => l.status === "APPROVED").length;
-const myRejected = myOwnLeaves.filter(l => l.status === "REJECTED").length;
+const myOwnWorkRequests = workRequests.filter(
+  (r) => String(r.employee_id) === String(user?.id)
+);
+
+const myRequests = [
+  ...myOwnLeaves.map((leave) => ({
+    requestKey: `leave-${leave.id}`,
+    requestType: "LEAVE",
+    requestDate: leave.from_date,
+    data: leave,
+  })),
+  ...myOwnWorkRequests.map((request) => ({
+    requestKey: `work-${request.id}`,
+    requestType: request.type,
+    requestDate: request.created_at,
+    data: request,
+  })),
+].sort(
+  (a, b) =>
+    new Date(b.requestDate).getTime() -
+    new Date(a.requestDate).getTime()
+);
+
+const myPending = myRequests.filter(
+  (request) => request.data.status === "PENDING"
+).length;
+
+const myApproved = myRequests.filter(
+  (request) => request.data.status === "APPROVED"
+).length;
+
+const myRejected = myRequests.filter(
+  (request) => request.data.status === "REJECTED"
+).length;
 
 
 const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
@@ -530,50 +561,25 @@ marginBottom: "20px",    }}
     marginBottom: 25,
   }}
 >
-  <button
-    onClick={() => {
-      setShowAttendance(true);
-      setTimeout(() => {
-        document
-          .getElementById("attendance-history")
-          ?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }}
-    style={{
-      padding: 20,
-      borderRadius: 15,
-      border: "none",
-      background: " #f59e0b",
-      color: "white",
-      cursor: "pointer",
-      fontSize: 16,
-      fontWeight: 600,
-    }}
-  >
-    📍 Attendance
-  </button>
-
-  <button
-    onClick={() =>
-      document
-        .getElementById("leave-form")
-        ?.scrollIntoView({ behavior: "smooth" })
-    }
-    style={{
-      padding: 20,
-      borderRadius: 15,
-      border: "none",
-      background: " #f59e0b",
-      color: "white",
-      cursor: "pointer",
-      fontSize: 16,
-      fontWeight: 600,
-    }}
-  >
-    📝 Apply Leave
-  </button>
+  
 
  
+  <button
+    onClick={() => setShowRequestMenu(!showRequestMenu)}
+    style={{
+      padding: 20,
+      borderRadius: 15,
+      border: "none",
+      background: "#f59e0b",
+      color: "white",
+      cursor: "pointer",
+      fontSize: 16,
+      fontWeight: 600,
+    }}
+  >
+    ➕ New Request
+  </button>
+
   <button
     onClick={() => {
       sessionStorage.clear();
@@ -583,7 +589,7 @@ marginBottom: "20px",    }}
       padding: 20,
       borderRadius: 15,
       border: "none",
-      background: " #f59e0b",
+      background: "#f59e0b",
       color: "white",
       cursor: "pointer",
       fontSize: 16,
@@ -593,6 +599,101 @@ marginBottom: "20px",    }}
     🚪 Logout
   </button>
 </div>
+
+{showRequestMenu && (
+  <div
+    style={{
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 20,
+      display: "flex",
+      justifyContent: "center",
+      gap: 12,
+      flexWrap: "wrap",
+      boxShadow: "0 2px 8px rgba(0,0,0,.05)",
+    }}
+  >
+    <button
+      onClick={() => {
+        setShowRequestMenu(false);
+        setShowLeaveForm(true);
+
+        setTimeout(() => {
+          document
+            .getElementById("leave-form")
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 0);
+      }}
+      style={{
+        padding: "10px 16px",
+        borderRadius: 8,
+        border: "none",
+        background: "#f59e0b",
+        color: "#fff",
+        cursor: "pointer",
+        fontWeight: 600,
+      }}
+    >
+      📝 Apply Leave
+    </button>
+
+    <button
+      onClick={() => {
+        setShowRequestMenu(false);
+        handleWorkRequest("WFH");
+      }}
+      style={{
+        padding: "10px 16px",
+        borderRadius: 8,
+        border: "none",
+        background: "#f59e0b",
+        color: "#fff",
+        cursor: "pointer",
+        fontWeight: 600,
+      }}
+    >
+      🏠 WFH Request
+    </button>
+
+    <button
+      onClick={() => {
+        setShowRequestMenu(false);
+        handleWorkRequest("OUTDOOR");
+      }}
+      style={{
+        padding: "10px 16px",
+        borderRadius: 8,
+        border: "none",
+        background: "#f59e0b",
+        color: "#fff",
+        cursor: "pointer",
+        fontWeight: 600,
+      }}
+    >
+      🚗 Outdoor Request
+    </button>
+
+    <button
+      onClick={() => {
+        setShowRequestMenu(false);
+        navigate("/attendance-regularization");
+      }}
+      style={{
+        padding: "10px 16px",
+        borderRadius: 8,
+        border: "none",
+        background: "#f59e0b",
+        color: "#fff",
+        cursor: "pointer",
+        fontWeight: 600,
+      }}
+    >
+      🕒 Attendance Regularization
+    </button>
+  </div>
+)}
 
 
 <div
@@ -685,136 +786,6 @@ marginBottom: "20px",    }}
     <p>Punch Out</p>
   </div>
 </div>
-{showAttendance && (
-  <div
-    id="attendance-history"
-    style={{
-      background: "#fff",
-      borderRadius: 16,
-      padding: 20,
-      marginTop: 20,
-      marginBottom: 20,
-      boxShadow: "0 4px 15px rgba(0,0,0,.08)",
-      overflowX: "auto",
-    }}
-  >
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 20,
-      }}
-    >
-      <h2 style={{ margin: 0 }}>📍 Attendance History</h2>
-
-      <button
-        onClick={() => setShowAttendance(false)}
-        style={{
-          border: "none",
-          background: "#f59e0b",
-          color: "#fff",
-          padding: "8px 14px",
-          borderRadius: 8,
-          cursor: "pointer",
-        }}
-      >
-        Close
-      </button>
-    </div>
-
-    {attendance.length === 0 ? (
-      <p>No attendance history found.</p>
-    ) : (
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          minWidth: 650,
-        }}
-      >
-        <thead>
-          <tr style={{ background: "#fff7ed" }}>
-            <th style={{ padding: 12, textAlign: "left" }}>Date</th>
-            <th style={{ padding: 12, textAlign: "left" }}>Punch In</th>
-            <th style={{ padding: 12, textAlign: "left" }}>Punch Out</th>
-            <th style={{ padding: 12, textAlign: "left" }}>
-              Working Hours
-            </th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {[...attendance]
-            .sort(
-              (a, b) =>
-                parseAttendanceDate(b.punch_in).getTime() -
-                parseAttendanceDate(a.punch_in).getTime()
-            )
-            .map((a) => {
-              const punchIn = parseAttendanceDate(a.punch_in);
-
-              const punchOut = a.punch_out
-                ? parseAttendanceDate(a.punch_out)
-                : null;
-
-              const minutes = punchOut
-                ? Math.max(
-                    0,
-                    Math.floor(
-                      (punchOut.getTime() - punchIn.getTime()) / 60000
-                    )
-                  )
-                : null;
-
-              const recordWorkingHours =
-                minutes !== null
-                  ? `${Math.floor(minutes / 60)}h ${minutes % 60}m`
-                  : "In Progress";
-
-              return (
-                <tr
-                  key={a.id}
-                  style={{
-                    borderBottom: "1px solid #e5e7eb",
-                  }}
-                >
-                  <td style={{ padding: 12 }}>
-                    {punchIn.toLocaleDateString("en-IN", {
-                      timeZone: "Asia/Kolkata",
-                    })}
-                  </td>
-
-                  <td style={{ padding: 12 }}>
-                    {punchIn.toLocaleTimeString("en-IN", {
-                      timeZone: "Asia/Kolkata",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </td>
-
-                  <td style={{ padding: 12 }}>
-                    {punchOut
-                      ? punchOut.toLocaleTimeString("en-IN", {
-                          timeZone: "Asia/Kolkata",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
-                      : "--"}
-                  </td>
-
-                  <td style={{ padding: 12, fontWeight: 600 }}>
-                    {recordWorkingHours}
-                  </td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
-    )}
-  </div>
-)}
-
 {/* 👈 My Leaves cards ka end */}
 <div
 style={{
@@ -859,35 +830,6 @@ style={{
     Punch Out
   </button>
 
-<button
-  onClick={() => handleWorkRequest("OUTDOOR")}
-  style={{
-    background: "#f59e0b",
-    color: "white",
-    border: "none",
-    padding: "10px 18px",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: 600,
-  }}
->
-  Outdoor
-</button>
-
-<button
-  onClick={() => handleWorkRequest("WFH")}
-  style={{
-    background: "#f59e0b",
-    color: "white",
-    border: "none",
-    padding: "10px 18px",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: 600,
-  }}
->
-  WFH
-</button>
 </div>
       {/* BALANCE */}
 <div
@@ -947,7 +889,8 @@ style={{
 <div
   style={{
     display: "grid",
-    gridTemplateColumns: "1fr 1fr",
+    gridTemplateColumns: showLeaveForm ? "1fr 1fr" : "minmax(320px, 560px)",
+    justifyContent: "center",
     gap: 20,
     alignItems: "start",
     margin: "25px 0",
@@ -956,6 +899,7 @@ style={{
 
 {/* APPLY LEAVE */}
 
+{showLeaveForm && (
 <div
   id="leave-form"
   style={{
@@ -1038,6 +982,7 @@ cursor:"pointer"
 </button>
 
 </div>
+)}
 
 {/* CALENDAR */}
 
@@ -1050,20 +995,110 @@ boxShadow:"0 4px 15px rgba(0,0,0,.08)"
 }}
 >
 
-<h2 style={{marginTop:0}}>
-📅 Leave Calendar
+<h2 style={{ marginTop: 0 }}>
+📅 Attendance Calendar
 </h2>
 
 <Calendar
-value={new Date()}
+  value={new Date()}
+  tileContent={({ date, view }) => {
+  if (view !== "month") return null;
+
+  const day = date.getDay();
+
+  if (day === 0 || day === 6) {
+    return (
+      <div style={{ fontSize: 10, color: "#9ca3af" }}>
+        OFF
+      </div>
+    );
+  }
+
+  const dateKey = date.toLocaleDateString("en-CA");
+  const todayKey = new Date().toLocaleDateString("en-CA", {
+    timeZone: "Asia/Kolkata",
+  });
+
+  const attendanceRecord = attendance.find(
+    (a) =>
+      parseAttendanceDate(a.punch_in).toLocaleDateString(
+        "en-CA",
+        { timeZone: "Asia/Kolkata" }
+      ) === dateKey
+  );
+
+  if (attendanceRecord) {
+    return (
+      <div style={{ fontSize: 10, color: "#16a34a", fontWeight: 700 }}>
+        PRESENT
+      </div>
+    );
+  }
+
+  const approvedLeave = myOwnLeaves.find((leave) => {
+    if (leave.status !== "APPROVED") return false;
+
+    return (
+      dateKey >= leave.from_date.slice(0, 10) &&
+      dateKey <= leave.to_date.slice(0, 10)
+    );
+  });
+
+  if (approvedLeave) {
+    return (
+      <div style={{ fontSize: 10, color: "#7c3aed", fontWeight: 700 }}>
+        {approvedLeave.type}
+      </div>
+    );
+  }
+
+  const approvedWorkRequest = workRequests.find((request) => {
+    if (
+      String(request.employee_id) !== String(user?.id) ||
+      request.status !== "APPROVED"
+    ) {
+      return false;
+    }
+
+    const requestDate = new Date(
+      request.created_at
+    ).toLocaleDateString("en-CA", {
+      timeZone: "Asia/Kolkata",
+    });
+
+    return requestDate === dateKey;
+  });
+
+  if (approvedWorkRequest) {
+    return (
+      <div style={{ fontSize: 10, color: "#2563eb", fontWeight: 700 }}>
+        {approvedWorkRequest.type}
+      </div>
+    );
+  }
+
+  if (dateKey < todayKey) {
+    return (
+      <div style={{ fontSize: 10, color: "#dc2626", fontWeight: 700 }}>
+        ABSENT
+      </div>
+    );
+  }
+
+  return null;
+}}
+
 />
 
+
 </div>
 
 </div>
-{/* ================= MY LEAVES ================= */}
+
+{/* ================= MY REQUESTS ================= */}
+
 <div
-  onClick={() => setShowMyLeaves(!showMyLeaves)}
+  onClick={() => setShowMyRequests(!showMyRequests)}
   style={{
     background: "#fff",
     padding: "16px 20px",
@@ -1074,98 +1109,102 @@ value={new Date()}
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    boxShadow: "0 2px 8px rgba(0,0,0,.08)"
+    boxShadow: "0 2px 8px rgba(0,0,0,.08)",
   }}
 >
   <h3 style={{ margin: 0 }}>
-    📂 My Leaves ({myOwnLeaves.length})
+    📂 My Requests ({myRequests.length})
   </h3>
 
   <span style={{ fontSize: 22 }}>
-    {showMyLeaves ? "▲" : "▼"}
+    {showMyRequests ? "▲" : "▼"}
   </span>
 </div>
 
-
-{showMyLeaves && (
+{showMyRequests && (
   <>
-    {myOwnLeaves.map((l) => (
+    {myRequests.length === 0 ? (
       <div
-        key={l.id}
         style={{
           background: "#fff",
           borderRadius: 15,
           padding: 20,
           marginBottom: 15,
           boxShadow: "0 5px 15px rgba(0,0,0,.08)",
-          borderLeft: "6px solid #f59e0b",
         }}
       >
-        <h3 style={{ margin: 0 }}>📝 {l.type} Leave</h3>
-
-        <p><b>Status:</b> {l.status}</p>
-
-        <p><b>From:</b> {new Date(l.from_date).toLocaleDateString()}</p>
-
-        <p><b>To:</b> {new Date(l.to_date).toLocaleDateString()}</p>
-
-        <p><b>Reason:</b> {l.reason}</p>
+        No requests found.
       </div>
-    ))}
+    ) : (
+      myRequests.map((request) => {
+        const item = request.data;
+
+        return (
+          <div
+            key={request.requestKey}
+            style={{
+              background: "#fff",
+              borderRadius: 15,
+              padding: 20,
+              marginBottom: 15,
+              boxShadow: "0 5px 15px rgba(0,0,0,.08)",
+              borderLeft:
+                item.status === "APPROVED"
+                  ? "6px solid #16a34a"
+                  : item.status === "REJECTED"
+                  ? "6px solid #dc2626"
+                  : "6px solid #f59e0b",
+            }}
+          >
+            {request.requestType === "LEAVE" ? (
+              <>
+                <h3 style={{ marginTop: 0 }}>
+                  📝 {item.type} Leave
+                </h3>
+                <p><b>Status:</b> {item.status}</p>
+                <p>
+                  <b>From:</b>{" "}
+                  {new Date(item.from_date).toLocaleDateString("en-IN")}
+                </p>
+                <p>
+                  <b>To:</b>{" "}
+                  {new Date(item.to_date).toLocaleDateString("en-IN")}
+                </p>
+                <p><b>Reason:</b> {item.reason}</p>
+              </>
+            ) : (
+              <>
+                <h3 style={{ marginTop: 0 }}>
+                  {request.requestType === "WFH"
+                    ? "🏠 WFH Request"
+                    : "🚗 Outdoor Request"}
+                </h3>
+                <p><b>Status:</b> {item.status}</p>
+                <p>
+                  <b>Date:</b>{" "}
+                  {item.created_at
+                    ? new Date(item.created_at).toLocaleDateString("en-IN")
+                    : "--"}
+                </p>
+                <p>
+                  <b>Time:</b>{" "}
+                  {item.created_at
+                    ? new Date(item.created_at).toLocaleTimeString("en-IN", {
+                        timeZone: "Asia/Kolkata",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "--"}
+                </p>
+              </>
+            )}
+          </div>
+        );
+      })
+    )}
   </>
 )}
-<div
-  onClick={() => setShowWorkRequests(!showWorkRequests)}
-  style={{
-    background: "#fff",
-    padding: "16px 20px",
-    borderRadius: 12,
-    marginTop: 20,
-    marginBottom: 15,
-    cursor: "pointer",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    boxShadow: "0 2px 8px rgba(0,0,0,.08)"
-  }}
->
-  <h3 style={{ margin: 0 }}>
-    💼 My Work Requests
-  </h3>
 
-  <span style={{ fontSize: 22 }}>
-    {showWorkRequests ? "▲" : "▼"}
-  </span>
-</div>
-
-{showWorkRequests && (
-  <>
-    {workRequests
-      .filter(r => String(r.employee_id) === String(user?.id))
-      .map((r) => (
-        <div
-          key={r.id}
-          style={{
-            background: "#fff",
-            borderRadius: 15,
-            padding: 20,
-            marginBottom: 15,
-            boxShadow: "0 5px 15px rgba(0,0,0,.08)"
-          }}
-        >
-          <p><b>Type:</b> {r.type}</p>
-          <p><b>Date:</b> {new Date(r.created_at).toLocaleDateString("en-IN")}</p>
-          <p><b>Time:</b> {new Date(r.created_at).toLocaleTimeString("en-IN", {
-          timeZone: "Asia/Kolkata",
-          hour: "2-digit",
-          minute: "2-digit",
-          })}</p>
-
-          <p><b>Status:</b> {r.status}</p>
-        </div>
-      ))}
-  </>
-)}
 {/* ================= TEAM LEAVES ================= */}
 {(isTL || isManager) && (
 <>
@@ -1422,24 +1461,6 @@ boxShadow:"0 2px 8px rgba(0,0,0,.08)"
     }}
   >
     👥 Employee Directory
-  </button>
-
-  <button
-    onClick={() => navigate("/attendance-regularization")}
-    style={{
-      padding: 20,
-      borderRadius: 15,
-      border: "none",
-      background: "#f59e0b",
-      color: "white",
-      cursor: "pointer",
-      fontSize: 16,
-      fontWeight: 600,
-    }}
-  
-  >
-  
-    ⏰ Attendance Regularization
   </button>
 </div>
 
