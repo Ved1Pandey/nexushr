@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [candidates, setCandidates] = useState<any[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCandidates();
@@ -56,6 +58,22 @@ const updateStatus = async (
   return (
   <div style={{ padding: 20 }}>
     <h1>HR Dashboard ✅</h1>
+    <div style={{ marginTop: 20, marginBottom: 20 }}>
+  <button
+    onClick={() => window.location.href = "/payroll"}
+    style={{
+      background: "#f59e0b",
+      color: "#fff",
+      border: "none",
+      padding: "12px 20px",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontWeight: "bold"
+    }}
+  >
+    💰 Payroll Management
+  </button>
+</div>
 
 <div style={{
   display: "flex",
@@ -185,20 +203,40 @@ const updateStatus = async (
     <h2>Payroll</h2>
 
 <div
+  onClick={() => navigate("/payroll")}
   style={{
     border: "1px solid #ccc",
     padding: 20,
     borderRadius: 10,
-    marginBottom: 20
+    marginBottom: 20,
+    cursor: "pointer",
+    background: "#f8fafc",
+    transition: "0.3s"
   }}
 >
-  <h3>Upcoming Feature 🚀</h3>
-  <p>Payroll module coming soon.</p>
-</div>
+  <h3>💰 Payroll Management</h3>
 
-  </div>
+  <p>
+    Create Salary Structure,
+    Run Payroll,
+    View Payroll History
+  </p>
+
+  <button
+    style={{
+      marginTop: 10,
+      padding: "10px 20px",
+      background: "#f59e0b",
+      color: "#fff",
+      border: "none",
+      borderRadius: 6,
+      cursor: "pointer"
+    }}
+  >
+    Open Payroll
+  </button>
+</div>
+</div>
 );
 };
-
-
 export default AdminDashboard;

@@ -33,10 +33,14 @@ const Payroll = () => {
   const [employeeDeductions, setEmployeeDeductions] = useState("");
 
   const [saving, setSaving] = useState(false);
+  const [runningPayroll, setRunningPayroll] = useState(false);
+  const [payrollHistory, setPayrollHistory] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState("structure");
 
   useEffect(() => {
     fetchEmployees();
     fetchSalaryStructures();
+    fetchPayrollHistory();
   }, []);
 
   const fetchEmployees = async () => {
@@ -65,6 +69,20 @@ const Payroll = () => {
     }
 
     setSalaryStructures(data || []);
+  };
+
+  const fetchPayrollHistory = async () => {
+    const { data, error } = await supabase
+      .from("payroll_history")
+      .select("*")
+      .order("id", { ascending: false });
+
+    if (error) {
+      console.log("PAYROLL HISTORY FETCH ERROR:", error);
+      return;
+    }
+
+    setPayrollHistory(data || []);
   };
 
   const grossSalary =

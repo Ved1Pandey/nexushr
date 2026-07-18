@@ -18,11 +18,19 @@ useEffect(() => {
 
   const user = JSON.parse(userStr);
 
-  if (user.role === "HR") {
-    navigate("/admin-dashboard", { replace: true });
-  } else {
-    navigate("/dashboard", { replace: true });
-  }
+const role = String(user.role).toLowerCase();
+
+if (role === "admin") {
+  navigate("/admin-dashboard", { replace: true });
+}
+else if (role === "manager") {
+  navigate("/manager-dashboard", { replace: true });
+}
+else {
+  navigate("/dashboard", { replace: true });
+}
+
+
 }, [navigate]); 
 
   const handleLogin = async () => {
@@ -66,9 +74,16 @@ useEffect(() => {
       // alert("Login Success ✅");
 
       // ✅ single navigation
-      if (data.user.role === "HR") {
+      
+const role = String(data.user.role).toLowerCase();
+
+if (role === "admin") {
   navigate("/admin-dashboard", { replace: true });
-} else {
+}
+else if (role === "manager") {
+  navigate("/manager-dashboard", { replace: true });
+}
+else {
   navigate("/dashboard", { replace: true });
 }
 

@@ -11,6 +11,7 @@ import Applications from "./Admin/pages/Applications";
 import EmployeeDirectory from "./pages/EmployeeDirectory";
 import AttendanceRegularization from "./pages/AttendanceRegularization";
 import Payroll from "./Admin/pages/Payroll";
+import ManagerDashboard from "./pages/ManagerDashboard";
 
 function App() {
   return (
@@ -36,7 +37,8 @@ function App() {
        <Route path="/employee-directory" element={<ProtectedRoute><EmployeeDirectory /></ProtectedRoute>} />
        <Route path="/attendance-regularization" element={<ProtectedRoute><AttendanceRegularization /></ProtectedRoute>} />
        <Route path="/payroll" element={<ProtectedRoute><Payroll /></ProtectedRoute>} />
-       
+       <Route path="/manager-dashboard" element={<ProtectedRoute><ManagerDashboard /></ProtectedRoute>} />
+
        </Routes>
     </BrowserRouter>
   );
