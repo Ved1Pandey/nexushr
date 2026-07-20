@@ -418,7 +418,7 @@ console.log("BALANCE API:",balance);
 const role = user?.role?.toLowerCase();
 
 const isTL = role === "team lead";
-
+const isManager = role === "manager";
 // 🔹 MY OWN LEAVES (correct)
 const myOwnLeaves = leaves.filter(
   (l) => String(l.employee_id) === String(user?.id)
@@ -1205,7 +1205,7 @@ boxShadow:"0 4px 15px rgba(0,0,0,.08)"
 )}
 
 {/* ================= TEAM LEAVES ================= */}
-{(isTL || isTL) && (
+{(isTL || isManager) && (
 <>
 <div
 onClick={() => setShowTeamLeaves(!showTeamLeaves)}
@@ -1279,7 +1279,7 @@ boxShadow:"0 2px 8px rgba(0,0,0,.08)"
     ))}
   </>
 )}
-{(isTL) && (
+{(isTL || isManager) && (
   <>
     <div
       onClick={() => setShowTeamWorkRequests(!showTeamWorkRequests)}
@@ -1366,7 +1366,7 @@ boxShadow:"0 2px 8px rgba(0,0,0,.08)"
         ))}
   </>
 )}
-{(isTL) && (
+{(isTL || isManager) && (
   <>
     <div
       onClick={() =>

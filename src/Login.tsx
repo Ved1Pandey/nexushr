@@ -24,7 +24,7 @@ if (role === "admin") {
   navigate("/admin-dashboard", { replace: true });
 }
 else if (role === "manager") {
-  navigate("/manager-dashboard", { replace: true });
+  navigate("/dashboard", { replace: true });
 }
 else {
   navigate("/dashboard", { replace: true });
@@ -74,14 +74,15 @@ else {
       // alert("Login Success ✅");
 
       // ✅ single navigation
-      
+      console.log("ROLE:", data.user.role);
+console.log("USER:", data.user);
 const role = String(data.user.role).toLowerCase();
 
 if (role === "admin") {
   navigate("/admin-dashboard", { replace: true });
 }
 else if (role === "manager") {
-  navigate("/manager-dashboard", { replace: true });
+  navigate("/dashboard", { replace: true });
 }
 else {
   navigate("/dashboard", { replace: true });
