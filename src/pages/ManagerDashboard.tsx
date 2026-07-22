@@ -8,7 +8,7 @@ const ManagerDashboard = () => {
       <h1>Manager Dashboard</h1>
 
       <p style={{ marginBottom: 25 }}>
-        Team management panel
+        Team management panely
       </p>
 
       <div
