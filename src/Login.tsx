@@ -152,6 +152,11 @@ else {
       <button onClick={handleSignup}>
       Sign Up
    </button>
+   <br /><br />
+
+<button onClick={() => navigate("/forgot-password")}>
+  Forgot Password?
+</button>
     </div>
   );
 };
