@@ -12,7 +12,7 @@ import EmployeeDirectory from "./pages/EmployeeDirectory";
 import AttendanceRegularization from "./pages/AttendanceRegularization";
 import Payroll from "./Admin/pages/Payroll";
 import ManagerDashboard from "./pages/ManagerDashboard";
-import ForgotPassword from "./pages/ForgotPassword";
+import ForgotPassword from "./pages/ForgotPassword.tsx";
 
 function App() {
   return (

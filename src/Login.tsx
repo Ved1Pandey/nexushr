@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -6,7 +7,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   // ✅ already logged in → redirect ONCE only
@@ -125,39 +126,94 @@ else {
   }
 };
 
+
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Login</h2>
+    <div className="min-h-screen flex">
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-orange-500 via-orange-400 to-orange-600 text-white items-center justify-center p-16">
+  <div>
+    <h1 className="text-5xl font-bold">NexusHR</h1>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <p className="mt-4 text-xl">
+      Smart HR Management System
+    </p>
 
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <br /><br />
+    <div className="mt-10 space-y-4 text-lg">
+      <p>✔ Employee Management</p>
+      <p>✔ Attendance Tracking</p>
+      <p>✔ Leave Management</p>
+      <p>✔ Payroll</p>
+    </div>
+  </div>
+</div>
+<div className="flex w-full lg:w-1/2 items-center justify-center bg-gray-50 px-6">
+<div className="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-md border border-orange-100">
+      
+      <div className="w-16 h-1 bg-orange-500 rounded-full mb-6"></div>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <br /><br />
+<h2 className="text-3xl font-bold text-gray-800">
+  Welcome Back 👋
+</h2>
 
-      <button onClick={handleLogin} disabled={loading}>
-        {loading ? "Logging in..." : "Login"}
-      </button>
-      <button onClick={handleSignup}>
-      Sign Up
-   </button>
-   <br /><br />
 
-<button onClick={() => navigate("/forgot-password")}>
+<p className="text-gray-500 mb-8">
+Sign in to continue to NexusHR
+</p>
+
+
+      {error && (
+  <div className="mb-4 rounded-lg bg-red-100 border border-red-300 text-red-700 px-4 py-3">
+    {error}
+  </div>
+)}<input
+  type="email"
+  placeholder="Email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-5 focus:outline-none focus:ring-2 focus:ring-orange-500"
+/>
+
+      
+<div className="relative mb-5">
+
+<input
+  type={showPassword ? "text" : "password"}
+  placeholder="Password"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  className="w-full border border-gray-300 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-orange-500"
+/>
+
+<button
+  type="button"
+  onClick={() => setShowPassword(!showPassword)}
+  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+>
+  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+</button>
+
+</div>
+      <button
+  onClick={handleLogin}
+  disabled={loading}
+  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl transition duration-200 disabled:opacity-50"
+>
+  {loading ? "Logging in..." : "Sign In"}
+</button>
+<button
+  onClick={handleSignup}
+  className="w-full mt-3 border-2 border-orange-500 text-orange-500 font-semibold py-3 rounded-xl hover:bg-orange-50 transition duration-200"
+>
+  Sign Up
+</button>
+<button
+  onClick={() => navigate("/forgot-password")}
+  className="mt-4 w-full text-center text-orange-600 font-medium hover:text-orange-700 hover:underline transition"
+>
   Forgot Password?
 </button>
     </div>
+</div>
+</div>
   );
 };
 
