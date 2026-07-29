@@ -61,22 +61,22 @@ const safeFetch = async (endpoint: string, options: any = {}) => {
 
   return data;
 };
-const submitWorkRequest = async (type: "WFH" | "OUTDOOR") => {
-  try {
-    await safeFetch("/work-request", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ type }),
-    });
+//const submitWorkRequest = async (type: "WFH" | "OUTDOOR") => {
+  //try {
+    //await safeFetch("/work-request", {
+      //method: "POST",
+      //headers: {
+        //Authorization: `Bearer ${localStorage.getItem("token")}`,
+        //"Content-Type": "application/json",
+      //},
+      //body: JSON.stringify({ type }),
+    //});
 
-    alert(type + " request submitted to manager.");
-  } catch (err: any) {
-    alert(err.message);
-  }
-};
+    //alert(type + " request submitted to manager.");
+  //} catch (err: any) {
+    //alert(err.message);
+  //}
+//};
 
   // ==============================
   // FETCH LEAVES
