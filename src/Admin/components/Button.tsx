@@ -1,5 +1,3 @@
-import React from "react";
-
 const Dashboard = ({ onLogout }: any) => {
   const name = localStorage.getItem("name");
   const role = localStorage.getItem("role");
