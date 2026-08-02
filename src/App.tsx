@@ -1,63 +1,46 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./Login";
-import AdminDashboard from "./Admin/pages/AdminDashboard";
+import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
-import LeaveApproval from "./Admin/pages/LeaveApproval";
-import Reimbursement from "./Admin/pages/Reimbursement";
-import Tickets from "./Admin/pages/Tickets";
-import Users from "./Admin/pages/Users";
+import Career from "./pages/Career";
+import Signup from "./pages/Signup";
+import CandidateDashboard from "./pages/CandidateDashboard";
+import AdminDashboard from "./Admin/pages/AdminDashboard";
+import CreateJob from "./Admin/pages/CreateJob";
+import Applications from "./Admin/pages/Applications";
+import EmployeeDirectory from "./pages/EmployeeDirectory";
+import AttendanceRegularization from "./pages/AttendanceRegularization";
+import Payroll from "./Admin/pages/Payroll";
+import ManagerDashboard from "./pages/ManagerDashboard";
+import ForgotPassword from "./pages/ForgotPassword.tsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
-<Route
-  path="/admin"
-  element={
-    <ProtectedRoute>
-      <AdminDashboard />
-    </ProtectedRoute>
-  }
-/>
-
+        <Route path="/" 
+        element={<Login />} />
+        <Route path="/career" 
+        element={<Career />} />
         <Route
-  path="/admin/leave"
-  element={
-    <ProtectedRoute>
-      <LeaveApproval />
-    </ProtectedRoute>
-  }
-/>
-
-<Route
-  path="/admin/reimbursement"
-  element={
-    <ProtectedRoute>
-      <Reimbursement />
-    </ProtectedRoute>
-  }
-/>
-
-<Route
-  path="/admin/tickets"
-  element={
-    <ProtectedRoute>
-      <Tickets />
-    </ProtectedRoute>
-  }
-/>
-
-<Route
-  path="/admin/users"
-  element={
-    <ProtectedRoute>
-      <Users />
-    </ProtectedRoute>
-  }
-/>
-
-      </Routes>
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+       <Route path="/signup" element={<Signup />} />
+       <Route path="/candidate-dashboard"element={<CandidateDashboard />}/>
+       <Route path="/admin-dashboard" element={<AdminDashboard />} />
+       <Route path="/create-job" element={<CreateJob />}/>
+       <Route path="/applications" element={<Applications />} />
+       <Route path="/employee-directory" element={<ProtectedRoute><EmployeeDirectory /></ProtectedRoute>} />
+       <Route path="/attendance-regularization" element={<ProtectedRoute><AttendanceRegularization /></ProtectedRoute>} />
+       <Route path="/payroll" element={<ProtectedRoute><Payroll /></ProtectedRoute>} />
+       <Route path="/manager-dashboard" element={<ProtectedRoute><ManagerDashboard /></ProtectedRoute>} />
+       <Route path="/forgot-password" element={<ForgotPassword />} />
+       </Routes>
     </BrowserRouter>
   );
 }
