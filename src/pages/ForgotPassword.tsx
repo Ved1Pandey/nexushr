@@ -11,7 +11,7 @@ const ForgotPassword = () => {
   const [message, setMessage] = useState("");
 
   const sendOtp = async () => {
-    const res = await fetch("http://localhost:3001/api/forgot-password", {
+    const res = await fetch("import.meta.env.VITE_API_URL/api/forgot-password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +28,7 @@ const ForgotPassword = () => {
   };
 
   const verifyOtp = async () => {
-    const res = await fetch("http://localhost:3001/api/verify-otp", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/verify-otp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -48,7 +48,7 @@ const ForgotPassword = () => {
   };
 
   const resetPassword = async () => {
-    const res = await fetch("http://localhost:3001/api/reset-password", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/reset-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
