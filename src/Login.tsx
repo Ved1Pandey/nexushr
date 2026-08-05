@@ -60,9 +60,9 @@ const handleLogin = async () => {
     const role = data.user.role;
 
 if (role.toLowerCase() === "admin") {
-  navigate("/admin", { replace: true });
+  navigate("/admin-dashboard", { replace: true });
 } else {
-  navigate("/", { replace: true });
+  navigate("/dashboard", { replace: true });
 }
 
 
