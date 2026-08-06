@@ -1,7 +1,8 @@
 export const getLeaves = async () => {
   const token = sessionStorage.getItem("token");
 
-  const res = await fetch("http://localhost:3001/api/admin/leaves", {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/leaves`,
+ {
     headers: {
       Authorization: `Bearer ${token}`,
     },

@@ -69,6 +69,7 @@ if (role.toLowerCase() === "admin") {
   } catch (err) {
     console.error(err);
     setError("Server error ❌");
+    
   } finally {
     setLoading(false);
   }
