@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,16 +14,16 @@ const Login = () => {
   const token = sessionStorage.getItem("token");
   const user = sessionStorage.getItem("user");
 
-  if (token && user) { 
+  if (token && user) {
     const parsedUser = JSON.parse(user);
 
-    if (parsedUser.role === "admin") {
-      navigate("/admin", { replace: true });
+    if (parsedUser.role?.toLowerCase() === "admin") {
+      navigate("/admin-dashboard", { replace: true });
     } else {
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
+    }
   }
-}
-},[navigate]);
+}, [navigate]);
 
 const handleLogin = async () => {
   try {
@@ -106,6 +106,11 @@ if (role.toLowerCase() === "admin") {
     >
       {loading ? "Logging in..." : "Login"}
     </button>
+    <div style={{ marginTop: 15 }}>
+  <Link to="/forgot-password">
+    Forgot Password?
+  </Link>
+</div>
   </div>
 );
 };
