@@ -524,7 +524,17 @@ return (
 boxShadow: "0 2px 8px rgba(0,0,0,.05)",
 marginBottom: "20px",    }}
   >
-    <h1 style={{ margin: 0, fontSize: "32px" }}>Welcome, {user?.name}</h1>
+<p
+  style={{
+    marginTop: 8,
+    marginBottom: 0,
+    fontSize: 15,
+    color: UI.muted,
+  }}
+>
+  Today's Status: <b>{todayStatus}</b>
+</p>
+
 
     <p
       style={{
@@ -536,15 +546,14 @@ marginBottom: "20px",    }}
       Today's Status: {todayStatus}
     </p>
   </div>
- <div
+<div
   style={{
     display: "flex",
-    gap: "20px",
+    gap: "10px",
     flexWrap: "wrap",
-    margin: "15px 0 20px",
-    color: "#6b7280",
-    fontSize: "15px",
-    fontWeight: 500,
+    margin: "12px 0 22px",
+    color: UI.muted,
+    fontSize: "14px",
   }}
 >
   <span><b>ID:</b> {user?.id}</span>
@@ -552,28 +561,28 @@ marginBottom: "20px",    }}
   <span><b>Dept:</b> {user?.department || "--"}</span>
   <span><b>DOJ:</b> {user?.joining_date || "--"}</span>
 </div>
+
 <div
   style={{
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
-    gap: 20,
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: 14,
     marginBottom: 25,
   }}
 >
-  
-
- 
   <button
     onClick={() => setShowRequestMenu(!showRequestMenu)}
     style={{
-      padding: 20,
-      borderRadius: 15,
-      border: "none",
-      background: "#f59e0b",
-      color: "white",
+      padding: "16px 20px",
+      borderRadius: 12,
+      border: "1px solid #2563eb",
+      background: "#2563eb",
+      color: "#ffffff",
       cursor: "pointer",
-      fontSize: 16,
+      fontSize: 15,
       fontWeight: 600,
+      boxShadow: "0 2px 5px rgba(37, 99, 235, 0.20)",
+      transition: "all 0.2s ease",
     }}
   >
     ➕ New Request
@@ -585,35 +594,35 @@ marginBottom: "20px",    }}
       navigate("/");
     }}
     style={{
-      padding: 20,
-      borderRadius: 15,
-      border: "none",
-      background: "#f59e0b",
-      color: "white",
+      padding: "16px 20px",
+      borderRadius: 12,
+      border: "1px solid #e2e8f0",
+      background: "#ffffff",
+      color: "#475569",
       cursor: "pointer",
-      fontSize: 16,
+      fontSize: 15,
       fontWeight: 600,
+      boxShadow: "0 1px 3px rgba(15, 23, 42, 0.08)",
+      transition: "all 0.2s ease",
     }}
   >
     🚪 Logout
   </button>
 </div>
-
 {showRequestMenu && (
   <div
-    style={{
-      background: "#ffffff",
-      border: "1px solid #e5e7eb",
-      borderRadius: 16,
-      padding: 16,
-      marginBottom: 20,
-      display: "flex",
-      justifyContent: "center",
-      gap: 12,
-      flexWrap: "wrap",
-      boxShadow: "0 2px 8px rgba(0,0,0,.05)",
-    }}
-  >
+ style={{
+  background: "#ffffff",
+  border: "1px solid #e2e8f0",
+  borderRadius: 14,
+  padding: 18,
+  marginBottom: 20,
+  display: "flex",
+  justifyContent: "center",
+  gap: 10,
+  flexWrap: "wrap",
+  boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
+}}  >
     <button
       onClick={() => {
         setShowRequestMenu(false);
@@ -626,15 +635,15 @@ marginBottom: "20px",    }}
         }, 0);
       }}
       style={{
-        padding: "10px 16px",
-        borderRadius: 8,
-        border: "none",
-        background: "#f59e0b",
-        color: "#fff",
-        cursor: "pointer",
-        fontWeight: 600,
-      }}
-    >
+  padding: "11px 17px",
+  borderRadius: 10,
+  border: "1px solid #dbeafe",
+  background: "#eff6ff",
+  color: "#2563eb",
+  cursor: "pointer",
+  fontWeight: 600,
+  fontSize: 14,
+}}    >
       📝 Apply Leave
     </button>
 
@@ -644,12 +653,22 @@ marginBottom: "20px",    }}
         handleWorkRequest("WFH");
       }}
       style={{
-        padding: "10px 16px",
-        borderRadius: 8,
-        border: "none",
-        background: "#f59e0b",
-        color: "#fff",
-        cursor: "pointer",
+  padding: "11px 17px",
+  borderRadius: 10,
+  border: "1px solid #dbeafe",
+  background: "#eff6ff",
+  color: "#2563eb",
+  cursor: "pointer",
+  fontWeight: 600,
+  fontSize: 14,
+}}    >
+      📝 Apply Leave
+    </button>
+
+    <button
+      onClick={() => {
+        setShowRequestMenu(false);
+        handleWorkRequest("WFH");
         fontWeight: 600,
       }}
     >
@@ -675,21 +694,23 @@ marginBottom: "20px",    }}
     </button>
 
     <button
-      onClick={() => {
-        setShowRequestMenu(false);
-        navigate("/attendance-regularization");
-      }}
-      style={{
-        padding: "10px 16px",
-        borderRadius: 8,
-        border: "none",
-        background: "#f59e0b",
-        color: "#fff",
-        cursor: "pointer",
-        fontWeight: 600,
-      }}
-    >
-      🕒 Attendance Regularization
+  onClick={() => {
+    setShowRequestMenu(false);
+    navigate("/attendance-regularization");
+  }}
+  style={{
+    padding: "11px 17px",
+    borderRadius: 10,
+    border: "1px solid #dbeafe",
+    background: "#eff6ff",
+    color: "#2563eb",
+    cursor: "pointer",
+    fontWeight: 600,
+    fontSize: 14,
+    transition: "all 0.2s ease",
+  }}
+>
+  🕒 Attendance Regularization
     </button>
   </div>
 )}
@@ -797,38 +818,41 @@ style={{
   marginBottom: "20px",
 }}
 >
-  <button
+   <button
     onClick={handlePunchIn}
     disabled={punchLoading}
     style={{
-      background: "#f59e0b",
-      color: "white",
+      background: "#2563eb",
+      color: "#ffffff",
       border: "none",
-      padding: "10px 18px",
-      borderRadius: "8px",
+      padding: "11px 20px",
+      borderRadius: "10px",
       cursor: "pointer",
       fontWeight: 600,
+      fontSize: "14px",
+      boxShadow: "0 2px 6px rgba(37, 99, 235, 0.2)",
     }}
   >
-    Punch In
+    🟢 Punch In
   </button>
 
   <button
     onClick={handlePunchOut}
     disabled={punchLoading}
     style={{
-      background: "#f59e0b",
-      color: "white",
-      border: "none",
-      padding: "10px 18px",
-      borderRadius: "8px",
+      background: "#ffffff",
+      color: "#dc2626",
+      border: "1px solid #fecaca",
+      padding: "11px 20px",
+      borderRadius: "10px",
       cursor: "pointer",
       fontWeight: 600,
+      fontSize: "14px",
+      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.05)",
     }}
   >
-    Punch Out
+    🔴 Punch Out
   </button>
-
 </div>
       {/* BALANCE */}
 <div
