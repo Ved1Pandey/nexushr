@@ -529,22 +529,12 @@ marginBottom: "20px",    }}
     marginTop: 8,
     marginBottom: 0,
     fontSize: 15,
-    color: UI.muted,
+    color: "#64748b",
   }}
 >
   Today's Status: <b>{todayStatus}</b>
 </p>
 
-
-    <p
-      style={{
-        marginTop: 10,
-        fontSize: 18,
-        opacity: 0.95,
-      }}
-    >
-      Today's Status: {todayStatus}
-    </p>
   </div>
 <div
   style={{
@@ -552,7 +542,7 @@ marginBottom: "20px",    }}
     gap: "10px",
     flexWrap: "wrap",
     margin: "12px 0 22px",
-    color: UI.muted,
+    color: "#64748b",
     fontSize: "14px",
   }}
 >
@@ -646,52 +636,43 @@ marginBottom: "20px",    }}
 }}    >
       📝 Apply Leave
     </button>
+   <button
+  onClick={() => {
+    setShowRequestMenu(false);
+    handleWorkRequest("WFH");
+  }}
+  style={{
+    padding: "11px 17px",
+    borderRadius: 10,
+    border: "1px solid #dbeafe",
+    background: "#eff6ff",
+    color: "#2563eb",
+    cursor: "pointer",
+    fontWeight: 600,
+    fontSize: 14,
+  }}
+>
+  🏠 WFH Request
+</button>
 
-    <button
-      onClick={() => {
-        setShowRequestMenu(false);
-        handleWorkRequest("WFH");
-      }}
-      style={{
-  padding: "11px 17px",
-  borderRadius: 10,
-  border: "1px solid #dbeafe",
-  background: "#eff6ff",
-  color: "#2563eb",
-  cursor: "pointer",
-  fontWeight: 600,
-  fontSize: 14,
-}}    >
-      📝 Apply Leave
-    </button>
-
-    <button
-      onClick={() => {
-        setShowRequestMenu(false);
-        handleWorkRequest("WFH");
-        fontWeight: 600,
-      }}
-    >
-      🏠 WFH Request
-    </button>
-
-    <button
-      onClick={() => {
-        setShowRequestMenu(false);
-        handleWorkRequest("OUTDOOR");
-      }}
-      style={{
-        padding: "10px 16px",
-        borderRadius: 8,
-        border: "none",
-        background: "#f59e0b",
-        color: "#fff",
-        cursor: "pointer",
-        fontWeight: 600,
-      }}
-    >
-      🚗 Outdoor Request
-    </button>
+<button
+  onClick={() => {
+    setShowRequestMenu(false);
+    handleWorkRequest("OUTDOOR");
+  }}
+  style={{
+    padding: "11px 17px",
+    borderRadius: 10,
+    border: "1px solid #dbeafe",
+    background: "#eff6ff",
+    color: "#2563eb",
+    cursor: "pointer",
+    fontWeight: 600,
+    fontSize: 14,
+  }}
+>
+  🚗 Outdoor Request
+</button>
 
     <button
   onClick={() => {
@@ -749,27 +730,27 @@ marginBottom: "20px",    }}
   }}
 >
   <div
-    style={{
-      background: "#ffffff",
-      border: "1px solid #e5e7eb",
-      padding: "12px 18px",
-      borderRadius: "10px",
-      minWidth: "140px",
-      textAlign: "center",
-    }}
-  >
+   style={{
+  background: "#ffffff",
+  border: "1px solid #e2e8f0",
+  padding: "18px 20px",
+  borderRadius: 14,
+  minWidth: "160px",
+  textAlign: "center",
+  boxShadow: "0 2px 6px rgba(15, 23, 42, 0.06)",
+}}  >
     <h3>{workingHours}</h3>
     <p>Working Hours</p>
   </div>
-
   <div
     style={{
       background: "#ffffff",
-      border: "1px solid #e5e7eb",
-      padding: "15px 25px",
-      borderRadius: "10px",
-      minWidth: "180px",
+      border: "1px solid #e2e8f0",
+      padding: "18px 20px",
+      borderRadius: 14,
+      minWidth: "160px",
       textAlign: "center",
+      boxShadow: "0 2px 6px rgba(15, 23, 42, 0.06)",
     }}
   >
     <h3>
@@ -785,14 +766,15 @@ marginBottom: "20px",    }}
   </div>
 
   <div
-    style={{
-      background: "#ffffff",
-      border: "1px solid #e5e7eb",
-      padding: "15px 25px",
-      borderRadius: "10px",
-      minWidth: "180px",
-      textAlign: "center",
-    }}
+style={{
+  background: "#ffffff",
+  border: "1px solid #e2e8f0",
+  padding: "18px 20px",
+  borderRadius: 14,
+  minWidth: "160px",
+  textAlign: "center",
+  boxShadow: "0 2px 6px rgba(15, 23, 42, 0.06)",
+}}
   >
     <h3>
       {todayRecord?.punch_out
@@ -870,40 +852,53 @@ style={{
   style={{
     display: "flex",
     justifyContent: "center",
-    gap: "30px",
+    gap: "12px",
     padding: "10px 0",
+    flexWrap: "wrap",
   }}
 >
-  <span
-    style={{
-      background: "#fff7ed",
-      padding: "8px 16px",
-      borderRadius: "8px",
-      fontWeight: 600,
-    }}
-  >
+<span
+  style={{
+    background: "#eff6ff",
+    color: "#2563eb",
+    padding: "10px 18px",
+    borderRadius: "10px",
+    fontWeight: 600,
+    border: "1px solid #dbeafe",
+    minWidth: "100px",
+    textAlign: "center",
+  }}
+>
     CL : {balance?.CL ?? 0}
   </span>
 
-  <span
-    style={{
-      background: "#fff7ed",
-      padding: "8px 16px",
-      borderRadius: "8px",
-      fontWeight: 600,
-    }}
-  >
+<span
+  style={{
+    background: "#eff6ff",
+    color: "#2563eb",
+    padding: "10px 18px",
+    borderRadius: "10px",
+    fontWeight: 600,
+    border: "1px solid #dbeafe",
+    minWidth: "100px",
+    textAlign: "center",
+  }}
+>
     SL : {balance?.SL ?? 0}
   </span>
 
-  <span
-    style={{
-      background: "#fff7ed",
-      padding: "8px 16px",
-      borderRadius: "8px",
-      fontWeight: 600,
-    }}
-  >
+<span
+  style={{
+    background: "#eff6ff",
+    color: "#2563eb",
+    padding: "10px 18px",
+    borderRadius: "10px",
+    fontWeight: 600,
+    border: "1px solid #dbeafe",
+    minWidth: "100px",
+    textAlign: "center",
+  }}
+>
     PL : {balance?.PL ?? 0}
   </span>
 </div>
@@ -925,26 +920,40 @@ style={{
 {showLeaveForm && (
 <div
   id="leave-form"
-  style={{
-    background: "#fff",
-    borderRadius: 16,
-    padding: 20,
-    boxShadow: "0 4px 15px rgba(0,0,0,.08)"
-  }}
+style={{
+  background: "#ffffff",
+  border: "1px solid #e2e8f0",
+  borderRadius: 16,
+  padding: 24,
+  boxShadow: "0 4px 16px rgba(15, 23, 42, 0.07)",
+}}
 >
 
-<h2 style={{marginTop:0}}>
+<h2
+  style={{
+    marginTop: 0,
+    marginBottom: 20,
+    fontSize: 20,
+    color: "#0f172a",
+  }}
+>
 📝 Apply Leave
 </h2>
 
 <select
 value={type}
 onChange={(e)=>setType(e.target.value as LeaveType)}
+
 style={{
-width:"100%",
-padding:12,
-marginBottom:12,
-borderRadius:8
+  width: "100%",
+  padding: "11px 12px",
+  marginBottom: 12,
+  borderRadius: 10,
+  border: "1px solid #cbd5e1",
+  background: "#ffffff",
+  color: "#0f172a",
+  fontSize: 14,
+  boxSizing: "border-box",
 }}
 >
 <option value="CL">Casual Leave</option>
@@ -957,10 +966,15 @@ placeholder="Reason"
 value={reason}
 onChange={(e)=>setReason(e.target.value)}
 style={{
-width:"100%",
-padding:12,
-marginBottom:12,
-borderRadius:8
+  width: "100%",
+  padding: "11px 12px",
+  marginBottom: 12,
+  borderRadius: 10,
+  border: "1px solid #cbd5e1",
+  background: "#ffffff",
+  color: "#0f172a",
+  fontSize: 14,
+  boxSizing: "border-box",
 }}
 />
 
@@ -969,10 +983,15 @@ type="date"
 value={fromDate}
 onChange={(e)=>setFromDate(e.target.value)}
 style={{
-width:"100%",
-padding:12,
-marginBottom:12,
-borderRadius:8
+  width: "100%",
+  padding: "11px 12px",
+  marginBottom: 12,
+  borderRadius: 10,
+  border: "1px solid #cbd5e1",
+  background: "#ffffff",
+  color: "#0f172a",
+  fontSize: 14,
+  boxSizing: "border-box",
 }}
 />
 
@@ -980,25 +999,33 @@ borderRadius:8
 type="date"
 value={toDate}
 onChange={(e)=>setToDate(e.target.value)}
+
 style={{
-width:"100%",
-padding:12,
-marginBottom:20,
-borderRadius:8
+  width: "100%",
+  padding: "11px 12px",
+  marginBottom: 20,
+  borderRadius: 10,
+  border: "1px solid #cbd5e1",
+  background: "#ffffff",
+  color: "#0f172a",
+  fontSize: 14,
+  boxSizing: "border-box",
 }}
 />
 
 <button
 onClick={handleApplyLeave}
 style={{
-width:"100%",
-background:"#f59e0b",
-color:"#fff",
-padding:"14px",
-border:"none",
-borderRadius:10,
-fontWeight:600,
-cursor:"pointer"
+  width: "100%",
+  background: "#2563eb",
+  color: "#ffffff",
+  padding: "13px 14px",
+  border: "none",
+  borderRadius: 10,
+  fontWeight: 600,
+  cursor: "pointer",
+  fontSize: 14,
+  boxShadow: "0 2px 6px rgba(37, 99, 235, 0.2)",
 }}
 >
 {submitting ? "Applying..." : "Submit Leave"}
@@ -1008,18 +1035,25 @@ cursor:"pointer"
 )}
 
 {/* CALENDAR */}
-
 <div
-style={{
-background:"#fff",
-borderRadius:16,
-padding:20,
-boxShadow:"0 4px 15px rgba(0,0,0,.08)"
-}}
+  style={{
+    background: "#ffffff",
+    border: "1px solid #e2e8f0",
+    borderRadius: 16,
+    padding: 24,
+    boxShadow: "0 4px 16px rgba(15, 23, 42, 0.07)",
+  }}
 >
 
-<h2 style={{ marginTop: 0 }}>
-📅 Attendance Calendar
+<h2
+  style={{
+    marginTop: 0,
+    marginBottom: 20,
+    fontSize: 20,
+    color: "#0f172a",
+  }}
+>
+  📅 Attendance Calendar
 </h2>
 
 <Calendar
@@ -1121,26 +1155,39 @@ boxShadow:"0 4px 15px rgba(0,0,0,.08)"
 {/* ================= MY REQUESTS ================= */}
 
 <div
-  onClick={() => setShowMyRequests(!showMyRequests)}
+  onClick={() => setShowTeamWorkRequests(!showTeamWorkRequests)}
   style={{
-    background: "#fff",
+    background: "#ffffff",
     padding: "16px 20px",
-    borderRadius: 12,
-    marginTop: 25,
+    borderRadius: 14,
+    marginTop: 20,
     marginBottom: 15,
     cursor: "pointer",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    boxShadow: "0 2px 8px rgba(0,0,0,.08)",
+    border: "1px solid #e2e8f0",
+    boxShadow: "0 2px 6px rgba(15, 23, 42, 0.06)",
   }}
 >
-  <h3 style={{ margin: 0 }}>
-    📂 My Requests ({myRequests.length})
+  <h3
+    style={{
+      margin: 0,
+      fontSize: 17,
+      color: "#0f172a",
+    }}
+  >
+    💼 Team Work Requests
   </h3>
 
-  <span style={{ fontSize: 22 }}>
-    {showMyRequests ? "▲" : "▼"}
+  <span
+    style={{
+      fontSize: 16,
+      color: "#64748b",
+      fontWeight: 600,
+    }}
+  >
+    {showTeamWorkRequests ? "▲" : "▼"}
   </span>
 </div>
 
@@ -1165,20 +1212,21 @@ boxShadow:"0 4px 15px rgba(0,0,0,.08)"
         return (
           <div
             key={request.requestKey}
-            style={{
-              background: "#fff",
-              borderRadius: 15,
-              padding: 20,
-              marginBottom: 15,
-              boxShadow: "0 5px 15px rgba(0,0,0,.08)",
-              borderLeft:
-                item.status === "APPROVED"
-                  ? "6px solid #16a34a"
-                  : item.status === "REJECTED"
-                  ? "6px solid #dc2626"
-                  : "6px solid #f59e0b",
-            }}
-          >
+      
+style={{
+  background: "#ffffff",
+  border: "1px solid #e2e8f0",
+  borderRadius: 14,
+  padding: 20,
+  marginBottom: 15,
+  boxShadow: "0 3px 10px rgba(15, 23, 42, 0.06)",
+  borderLeft:
+    item.status === "APPROVED"
+      ? "5px solid #16a34a"
+      : item.status === "REJECTED"
+      ? "5px solid #dc2626"
+      : "5px solid #d97706",
+}}          >
             {request.requestType === "LEAVE" ? (
               <>
                 <h3 style={{ marginTop: 0 }}>
@@ -1232,43 +1280,59 @@ boxShadow:"0 4px 15px rgba(0,0,0,.08)"
 {(isTL || isManager) && (
 <>
 <div
-onClick={() => setShowTeamLeaves(!showTeamLeaves)}
-style={{
-background:"#fff",
-padding:"16px 20px",
-borderRadius:12,
-marginTop:20,
-marginBottom:15,
-cursor:"pointer",
-display:"flex",
-justifyContent:"space-between",
-alignItems:"center",
-boxShadow:"0 2px 8px rgba(0,0,0,.08)"
-}}
+  onClick={() => setShowTeamLeaves(!showTeamLeaves)}
+  style={{
+    background: "#ffffff",
+    padding: "16px 20px",
+    borderRadius: 14,
+    marginTop: 20,
+    marginBottom: 15,
+    cursor: "pointer",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    border: "1px solid #e2e8f0",
+    boxShadow: "0 2px 6px rgba(15, 23, 42, 0.06)",
+  }}
 >
-<h3 style={{margin:0}}>
-👥 Team Leaves ({teamLeaves.length})
-</h3>
+  <h3
+    style={{
+      margin: 0,
+      fontSize: 17,
+      color: "#0f172a",
+    }}
+  >
+    👥 Team Leaves ({teamLeaves.length})
+  </h3>
 
-<span>{showTeamLeaves ? "▲" : "▼"}</span>
+  <span
+    style={{
+      fontSize: 16,
+      color: "#64748b",
+      fontWeight: 600,
+    }}
+  >
+    {showTeamLeaves ? "▲" : "▼"}
+  </span>
 </div>
 
 {showTeamLeaves && teamLeaves.map((l)=>(
       <div
   key={l.id}
-  style={{
-    background: "#fff",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 18,
-    boxShadow: "0 4px 12px rgba(0,0,0,.08)",
-    borderLeft:
-      l.status === "APPROVED"
-        ? "6px solid #f59e0b"
-        : l.status === "REJECTED"
-        ? "6px solid #dc2626"
-        : "6px solid #f59e0b",
-  }}
+style={{
+  background: "#ffffff",
+  border: "1px solid #e2e8f0",
+  borderRadius: 14,
+  padding: 20,
+  marginBottom: 15,
+  boxShadow: "0 3px 10px rgba(15, 23, 42, 0.06)",
+  borderLeft:
+    l.status === "APPROVED"
+      ? "5px solid #16a34a"
+      : l.status === "REJECTED"
+      ? "5px solid #dc2626"
+      : "5px solid #d97706",
+}}
 >
   <h3 style={{ margin: 0 }}>{l.employees?.name}</h3>
 
@@ -1332,15 +1396,22 @@ boxShadow:"0 2px 8px rgba(0,0,0,.08)"
         .filter((r) => String(r.employee_id) !== String(user?.id))
         .map((r) => (
           <div
-            key={r.id}
-            style={{
-              background: "#fff",
-              padding: 20,
-              borderRadius: 12,
-              marginBottom: 15,
-              boxShadow: "0 4px 12px rgba(0,0,0,.08)",
-            }}
-          >
+  key={r.id}
+  style={{
+    background: "#ffffff",
+    border: "1px solid #e2e8f0",
+    padding: 20,
+    borderRadius: 14,
+    marginBottom: 15,
+    boxShadow: "0 3px 10px rgba(15, 23, 42, 0.06)",
+    borderLeft:
+      r.status === "APPROVED"
+        ? "5px solid #16a34a"
+        : r.status === "REJECTED"
+        ? "5px solid #dc2626"
+        : "5px solid #d97706",
+  }}
+>
             <p><b>Employee:</b> {r.employees?.name}</p>
 
 <p><b>Type:</b> {r.type}</p>
