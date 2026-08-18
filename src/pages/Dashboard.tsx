@@ -499,41 +499,103 @@ if (todayRecord?.punch_in) {
 }
 
 return (
-  
-<div
-  style={{
-    minHeight: "100vh",
-    background: "#f5f7fb",
-    padding: "20px",
-  }}
->
-  
-<div
-  style={{
-    maxWidth: "1200px",
-    margin: "0 auto",
-  }}
->
   <div
     style={{
-      background: "#ffffff",
-      color: "#111827",
-      border: "1px solid #e5e7eb",
-      padding: "18px",
-      borderRadius: "16px",
-boxShadow: "0 2px 8px rgba(0,0,0,.05)",
-marginBottom: "20px",    }}
+      minHeight: "100vh",
+      background: "#f5f7fb",
+      padding: "28px 20px",
+    }}
   >
-<p
-  style={{
-    marginTop: 8,
-    marginBottom: 0,
-    fontSize: 15,
-    color: "#64748b",
-  }}
->
-  Today's Status: <b>{todayStatus}</b>
-</p>
+    <div
+      style={{
+        maxWidth: "1200px",
+        margin: "0 auto",
+      }}
+    >
+      <div
+        style={{
+          background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
+          color: "#ffffff",
+          padding: "26px 28px",
+          borderRadius: "18px",
+          marginBottom: "18px",
+          boxShadow: "0 8px 24px rgba(37, 99, 235, 0.18)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "20px",
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontSize: "13px",
+                fontWeight: 600,
+                opacity: 0.82,
+                marginBottom: "6px",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
+            >
+              Employee Dashboard
+            </div>
+
+            <h1
+              style={{
+                margin: 0,
+                fontSize: "28px",
+                lineHeight: 1.2,
+                fontWeight: 700,
+              }}
+            >
+              Welcome, {user?.name || "Employee"} 👋
+            </h1>
+
+            <p
+              style={{
+                margin: "9px 0 0",
+                fontSize: "14px",
+                opacity: 0.9,
+              }}
+            >
+              Manage your attendance, leave and work requests.
+            </p>
+          </div>
+
+          <div
+            style={{
+              background: "rgba(255,255,255,0.14)",
+              border: "1px solid rgba(255,255,255,0.22)",
+              padding: "12px 16px",
+              borderRadius: "12px",
+              minWidth: "150px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "12px",
+                opacity: 0.78,
+                marginBottom: "4px",
+              }}
+            >
+              Today's Status
+            </div>
+
+            <div
+              style={{
+                fontSize: "17px",
+                fontWeight: 700,
+              }}
+            >
+              {todayStatus}
+            </div>
+          </div>
+        </div>
 
   </div>
 <div
