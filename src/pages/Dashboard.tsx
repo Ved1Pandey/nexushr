@@ -32,7 +32,7 @@ const Dashboard = () => {
   const [punchLoading, setPunchLoading] = useState(false);
   const [workRequests, setWorkRequests] = useState<any[]>([]);
   const navigate = useNavigate();
-  const [showMyRequests, setShowMyRequests] = useState(false)
+  const [showMyRequests] = useState(false);
   const [attendanceRequests, setAttendanceRequests] = useState<any[]>([]);
   const [showTeamLeaves,setShowTeamLeaves]=useState(false);
   const [showTeamWorkRequests, setShowTeamWorkRequests] = useState(false);
