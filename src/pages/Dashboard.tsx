@@ -32,7 +32,7 @@ const Dashboard = () => {
   const [punchLoading, setPunchLoading] = useState(false);
   const [workRequests, setWorkRequests] = useState<any[]>([]);
   const navigate = useNavigate();
-  const [showMyRequests] = useState(false);
+  const [showMyRequests, setShowMyRequests] = useState(false);
   const [attendanceRequests, setAttendanceRequests] = useState<any[]>([]);
   const [showTeamLeaves,setShowTeamLeaves]=useState(false);
   const [showTeamWorkRequests, setShowTeamWorkRequests] = useState(false);
@@ -1217,7 +1217,7 @@ style={{
 {/* ================= MY REQUESTS ================= */}
 
 <div
-  onClick={() => setShowTeamWorkRequests(!showTeamWorkRequests)}
+  onClick={() => setShowMyRequests(!showMyRequests)}
   style={{
     background: "#ffffff",
     padding: "16px 20px",
@@ -1239,7 +1239,7 @@ style={{
       color: "#0f172a",
     }}
   >
-    💼 Team Work Requests
+    📋 My Requests
   </h3>
 
   <span
@@ -1249,7 +1249,7 @@ style={{
       fontWeight: 600,
     }}
   >
-    {showTeamWorkRequests ? "▲" : "▼"}
+    {showMyRequests ? "▲" : "▼"}
   </span>
 </div>
 
